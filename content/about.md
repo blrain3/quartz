@@ -1,0 +1,34 @@
+---
+title: 关于
+description: 关于我和这个网站。
+---
+
+<figure>
+  <img src="https://tg.salix.eu.org/file/1784538305558_image.webp" alt="头像" style="max-height: 100px; width: auto; border-radius: 50%; float: left; margin-right: 1rem;" />
+</figure>
+
+你好，我的网络名字是 blrain，至于为什么叫这个名字，其实是取自专辑 [Bloom](https://en.wikipedia.org/wiki/Bloom_(Beach_House_album))，本意是绽放的雨点。。
+
+bloom 这个词像一个流动的过程，它包含了绽放、凋谢，以及来年的再次盛开。
+
+**一些我喜欢的事物：**
+
+- 秋日的落叶
+- 新书纸页的触感
+- 刚出炉的面包
+- 下雨前的空气
+- 长长的手写信
+- 安静的房间
+- 陌生人的赞美
+- 雨滴落在树冠上的声音
+- 触动人心的音乐
+
+---
+
+这个网站是我的随笔的电子版。它主要包含一些清单和笔记。
+
+它是用 HTML、CSS 和少量 JavaScript 手工打造的，网站主要配色参考了 [Adobe (Variant): Luminous Day](https://www.wikiart.org/en/josef-albers/adobe-variant-luminous-day-1952)。另外，这个网站不错： [Neocities](https://neocities.org/)。
+
+我在坚持网站维护和更新内容，这是一项永无止境的工作。
+
+[联系我 →](mailto:blrain@zohomail.com)
