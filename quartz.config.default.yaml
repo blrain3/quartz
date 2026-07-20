@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json
 configuration:
-  pageTitle: "blrain's notebook"
+  pageTitle: "notebook"
   pageTitleSuffix: ""
   enableSPA: true
   enablePopovers: true

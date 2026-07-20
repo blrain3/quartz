@@ -1,6 +1,5 @@
 ---
 title: 关于
-description: 关于我和这个网站。
 date: 2026-01-05
 ---
 
