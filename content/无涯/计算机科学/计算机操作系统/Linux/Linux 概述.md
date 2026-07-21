@@ -1,7 +1,8 @@
 [Linux](https://zh.wikipedia.org/wiki/Linux),是一种[自由和开放源码](https://zh.wikipedia.org/wiki/%E8%87%AA%E7%94%B1%E5%8F%8A%E5%BC%80%E6%94%BE%E6%BA%90%E4%BB%A3%E7%A0%81%E8%BD%AF%E4%BB%B6 "自由及开放源代码软件")的[类Unix](https://zh.wikipedia.org/wiki/%E7%B1%BBUnix%E7%B3%BB%E7%BB%9F "类Unix系统")[操作系统](https://zh.wikipedia.org/wiki/%E4%BD%9C%E6%A5%AD%E7%B3%BB%E7%B5%B1 "操作系统")。该操作系统的[内核](https://zh.wikipedia.org/wiki/%E5%86%85%E6%A0%B8 "内核")由[林纳斯·托瓦兹](https://zh.wikipedia.org/wiki/%E6%9E%97%E7%BA%B3%E6%96%AF%C2%B7%E6%89%98%E7%93%A6%E5%85%B9 "林纳斯·托瓦兹")在1991年10月5日首次发布。
 
-<div align="center"> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/960px-Tux.svg.png" width="20%">
-</div>
+<p style="text-align: center;">
+  <img src="https://tg.salix.eu.org/file/1784605986705_image.webp" width="20%" />
+</p>
 
 >Linux的[标志](https://zh.wikipedia.org/wiki/%E6%A8%99%E8%AA%8C "标志")和[吉祥物](https://zh.wikipedia.org/wiki/%E5%90%89%E7%A5%A5%E7%89%A9 "吉祥物")是一只名字叫做[Tux](https://zh.wikipedia.org/wiki/Tux "Tux")的[企鹅](https://zh.wikipedia.org/wiki/%E4%BC%81%E9%B5%9D "企鹅")，标志的由来是因为Linus在澳洲时曾被一座动物园里的[小蓝企鹅](https://zh.wikipedia.org/wiki/%E5%B0%8F%E8%97%8D%E4%BC%81%E9%B5%9D "小蓝企鹅")咬了一口，便选择企鹅作为Linux的标志，但更容易被接受的说法是：企鹅代表南极，而南极又是全世界所共有的一块陆地。这也就代表Linux是所有人的Linux。
 
