@@ -13,3 +13,5 @@ REST API使用标准 HTTP 方法（GET、POST、PUT、DELETE）与 URI 表示的
 
 现代互联网架构
 ![](https://r2.salix.eu.org/obsidian/{fileName}.{extName}/20260516193300464.webp)
+
+REST API 基于 [[无涯/计算机科学/计算机网络/协议/HTTP|HTTP 协议]]。

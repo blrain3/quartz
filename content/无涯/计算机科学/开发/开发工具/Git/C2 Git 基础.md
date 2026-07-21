@@ -262,3 +262,5 @@ git diff HEAD         # 工作区 vs 最新提交（全部修改）
 git diff <commit1> <commit2>   # 两个提交之间的差异
 git diff --stat               # 简略统计
 ```
+
+下一步：[[无涯/计算机科学/开发/开发工具/Git/C3 Git 分支|Git 分支]]。
