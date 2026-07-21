@@ -1,11 +1,6 @@
 ---
 title: Office 安装与激活教程
 date: 2026-01-20
-tags:
-  - 工具
-  - Office
-  - 教程
-created: 
 ---
 
 > 从下载安装到激活，完整的 Office 部署指南。

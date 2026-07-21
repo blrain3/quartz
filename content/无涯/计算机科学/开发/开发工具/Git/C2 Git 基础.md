@@ -1,3 +1,8 @@
+---
+title: Git 基础
+date: 2025-01-20
+---
+
 记得刚开始使用Git的时候真是一头雾水，一出错就想着复制一份新的仓库拷贝，与下面的漫画十分相似：
 <p style="text-align: center;">
   <img src="https://cloudflare-imgbed-wrn.pages.dev/file/obsidian/1774670919336_IMG-20260327234330178.webp" width="50%" />

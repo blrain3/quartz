@@ -1,3 +1,8 @@
+---
+title: Vim
+date: 2025-03-01
+---
+
 **[Vim](https://en.wikipedia.org/wiki/Vim_(text_editor))** 是一个历史悠久的强大文本编辑器，起源于 1976 年的 `qed` 编辑器。1991 年由 Bram Moolenaar 发布初始版本。
 
 ##  主要模式：

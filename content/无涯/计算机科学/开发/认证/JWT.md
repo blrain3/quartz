@@ -1,3 +1,8 @@
+---
+title: JWT
+date: 2025-05-28
+---
+
 [**JSON Web Token**](https://en.wikipedia.org/wiki/JSON_Web_Token)，是一项[拟定的互联网标准](https://en.wikipedia.org/wiki/Internet_Standard#Proposed_Standard "Internet Standard") ，用于创建带有可选[签名](<https://en.wikipedia.org/wiki/Signature_(cryptography)> "Signature (cryptography)")和/或可选[加密](https://en.wikipedia.org/wiki/Encryption "Encryption")的数据，其[载荷](<https://en.wikipedia.org/wiki/Payload_(computing)> "Payload (computing)")包含 [JSON](https://en.wikipedia.org/wiki/JSON "JSON")，用于声明若干[声明](https://en.wikipedia.org/wiki/Claims-based_identity "Claims-based identity") 。这些令牌使用[私有密钥](https://en.wikipedia.org/wiki/Shared_secret "Shared secret")或[公钥/私钥](https://en.wikipedia.org/wiki/Public-key_cryptography "Public-key cryptography")进行签名。
 
 例如，服务器可以生成一个包含"以管理员身份登录"声明的令牌，并将其提供给客户端。随后，客户端可使用该令牌来证明其以管理员身份登录。令牌可由一方（通常是服务器）的私钥进行签名，以便任何一方都能随后验证令牌是否合法。如果另一方通过某种合适且可信的方式拥有相应的公钥，他们也能验证令牌的合法性。
