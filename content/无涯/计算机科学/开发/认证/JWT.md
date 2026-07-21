@@ -46,3 +46,5 @@ JWT 声明通常可用于在[身份提供者](https://en.wikipedia.org/wiki/Iden
 
 类似酒店前台帮你保存身份信息，你只拿房卡。
 ![](https://r2.salix.eu.org/obsidian/{fileName}.{extName}/20260516200346763.webp)
+
+授权协议可参考 [[无涯/计算机科学/开发/认证/OAuth|OAuth]]。

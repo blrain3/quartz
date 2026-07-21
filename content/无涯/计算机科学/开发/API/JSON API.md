@@ -19,3 +19,5 @@ date: 2025-05-20
 
 JSON API 的整体流程
 ![](https://r2.salix.eu.org/obsidian/{fileName}.{extName}/20260516194222584.webp)
+
+设计风格可参考 [[无涯/计算机科学/开发/API/REST|REST]]。
