@@ -1,5 +1,6 @@
 ---
 title: HTTP
+date: 2025-06-05
 description: 超文本传输协议（HTTP）—— 浏览器和服务器之间通信的规则。
 tags:
   - 网络
