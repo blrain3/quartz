@@ -1,10 +1,6 @@
 ---
 title: HTTP
 date: 2025-06-05
-description: 超文本传输协议（HTTP）—— 浏览器和服务器之间通信的规则。
-tags:
-  - 网络
-  - 协议
 ---
 
 [HTTP](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Guides/Overview)（HyperText Transfer Protocol，超文本传输协议）是浏览器（客户端）和服务器之间传递数据的一套规则。可以把它理解成：

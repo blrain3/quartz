@@ -1,10 +1,6 @@
 ---
 title: DNS
 date: 2025-02-20
-description: 域名系统（DNS）—— 将域名转换为 IP 地址的互联网”电话簿”。
-tags:
-  - 网络
-  - 协议
 ---
 
 Domain Name System（域名系统） 将人类可读的域名转换为 IP 地址，可以理解为**互联网的”电话簿”或者”通讯录”。**

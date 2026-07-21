@@ -1,3 +1,8 @@
+---
+title: CNAME 记录
+date: 2025-06-22
+---
+
 - GitHub Pages 现在会自动在您的分支中执行此操作
 
 你需要前往 DNS 提供商→高级 DNS →创建新的 CNAME 记录

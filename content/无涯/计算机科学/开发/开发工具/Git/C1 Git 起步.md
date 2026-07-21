@@ -1,3 +1,8 @@
+---
+title: Git 起步
+date: 2025-01-10
+---
+
 >在开始之前，请先了解并阅读 [《Pro Git》](https://git-scm.com/book/zh/v2/)的部分内容。
 ## 版本控制
 

@@ -1,3 +1,8 @@
+---
+title: Nginx
+date: 2025-06-15
+---
+
 [**Nginx**](https://en.wikipedia.org/wiki/Nginx)是一种[网页服务器](https://en.wikipedia.org/wiki/Web_server "Web server") ，也可用作[反向代理](https://en.wikipedia.org/wiki/Reverse_proxy "Reverse proxy") 、 [负载均衡器](https://en.wikipedia.org/wiki/Load_balancer "Load balancer") 、邮件代理和 [HTTP 缓存](https://en.wikipedia.org/wiki/HTTP_cache "HTTP cache") 。
 
 ![](https://r2.salix.eu.org/obsidian/{fileName}.{extName}/20260516203633595.webp)
