@@ -1,3 +1,8 @@
+---
+title: Nano
+date: 2025-03-08
+---
+
 **GNU nano**是一款适用[于类 Unix](https://en.wikipedia.org/wiki/Unix-like "类Unix系统")计算系统或操作系统环境的[文本编辑器，它使用](https://en.wikipedia.org/wiki/Text_editor "文本编辑器")[命令行界面](https://en.wikipedia.org/wiki/Command_line_interface "命令行界面")。它模拟了[Pine](https://en.wikipedia.org/wiki/Pine_\(email_client\) "Pine（电子邮件客户端）")邮件客户端中的[Pico](https://en.wikipedia.org/wiki/Pico_\(text_editor\) "Pico（文本编辑器）")[^1]文本编辑器，并提供了额外的功能。
 
 [官方网站](https://www.nano-editor.org/)

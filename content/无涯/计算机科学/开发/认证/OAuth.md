@@ -1,3 +1,8 @@
+---
+title: OAuth
+date: 2025-06-05
+---
+
 [**OAuth**](https://en.wikipedia.org/wiki/OAuth)（pen Authorization，**开放授权**）是一种用于访问[委托](https://en.wikipedia.org/wiki/Open_standard "Open standard")的[开放标准](<https://en.wikipedia.org/wiki/Delegation_(computer_security)> "Delegation (computer security)") ，通常作为互联网用户授权网站或应用程序访问其在其他网站上的信息，而无需提供密码的方式
 
 > 本质是让第三方应用在不拿到你密码的情况下，有限地访问你的数据。

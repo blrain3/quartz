@@ -1,3 +1,8 @@
+---
+title: LaTeX
+date: 2025-04-10
+---
+
 > *"Every time I read a LaTeX document, I think, wow, this must be correct!"*
 ---
 
