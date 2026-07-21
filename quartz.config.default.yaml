@@ -188,9 +188,6 @@ plugins:
       condition: not-index
   - source: github:quartz-community/comments
     enabled: false
-    options:
-      provider: giscus
-      options: {}
     layout:
       position: afterBody
       priority: 10
