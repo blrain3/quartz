@@ -80,7 +80,7 @@ TeamSpeak 是一款跨平台的语音通信软件，广泛应用于游戏、线�
 点击添加书签，输入服务器地址进行连接：
 
 <p style="text-align: center;">
-  <img src="https://tg.salix.eu.org/file/1784687043403_image.webp" width="80%" />
+  <img src="https://tg.salix.eu.org/file/1784689716584_image.webp" width="80%" />
 </p>
 
 ---
