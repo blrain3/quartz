@@ -3,6 +3,7 @@ import { QuartzComponentProps } from "../../components/types"
 export type ConditionPredicate = (props: QuartzComponentProps) => boolean
 
 const builtinConditions: Record<string, ConditionPredicate> = {
+  "index-only": (props) => props.fileData.slug === "index",
   "not-index": (props) => props.fileData.slug !== "index",
   "has-tags": (props) => {
     const tags = props.fileData.frontmatter?.tags
