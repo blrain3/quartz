@@ -135,6 +135,7 @@ plugins:
     layout:
       position: right
       priority: 10
+      condition: index-only
   - source: github:quartz-community/search
     enabled: true
     layout:
