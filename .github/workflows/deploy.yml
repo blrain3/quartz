@@ -33,6 +33,9 @@ jobs:
       - name: Install Quartz plugins
         run: npx quartz plugin install
 
+      - name: Patch graph plugin for Chinese URL support
+        run: node scripts/patch-graph.mjs
+
       - name: Build Quartz
         run: npx quartz build
 
