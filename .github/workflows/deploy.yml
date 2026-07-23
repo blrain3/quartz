@@ -39,6 +39,9 @@ jobs:
       - name: Build Quartz
         run: npx quartz build
 
+      - name: Patch postscript for Chinese URL support
+        run: node scripts/patch-graph-output.mjs
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
