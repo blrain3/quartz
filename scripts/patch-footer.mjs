@@ -1,5 +1,5 @@
-// 🩹 Patch footer component: set Chinese author text
-// Targets both dist/index.js and dist/components/index.js
+// 🩹 Patch footer component: set "blrain 2026" text
+// Runs after `npm run install-plugins`
 
 import { readFileSync, writeFileSync, existsSync } from "fs"
 import { resolve } from "path"
@@ -7,9 +7,22 @@ import { resolve } from "path"
 const root = resolve(import.meta.dirname, "..")
 
 const targets = [
-  ".quartz/plugins/footer/dist/index.js",
   ".quartz/plugins/footer/dist/components/index.js",
+  ".quartz/plugins/footer/dist/index.js",
 ]
+
+const OLD_SNIPPETS = [
+  // Image + Chinese text + Quartz link
+  `"由 blrain 基于 "`,
+  // Image + English text + Quartz link
+  `"create by blrain with "`,
+  `"Created by blrain with "`,
+  `"Created by blrain with"`,
+]
+
+const NEW_FOOTER = `u2("footer", { class: \`\${displayClass ?? ""}\`, children: [
+      /* @__PURE__ */ u2("p", { children: ["blrain 2026"] })
+    ] })`
 
 let patched = 0
 for (const rel of targets) {
@@ -20,53 +33,57 @@ for (const rel of targets) {
   }
   let src = readFileSync(abs, "utf-8")
 
-  // Case 1: Default plugin with i18n-based "Created with" + version + year + links
-  const OLD_I18N = `i18n(cfg?.locale ?? "en-US").components.footer.createdWith`
-  const NEW_TEXT = `"由 blrain 基于"`
-  if (src.includes(OLD_I18N)) {
-    src = src.replace(OLD_I18N, NEW_TEXT)
-    writeFileSync(abs, src, "utf-8")
-    console.log(`[patch-footer] ✅ Patched ${rel} (i18n → Chinese)`)
-    patched++
-    continue
-  }
-
-  // Case 2: Previously patched with "Created by blrain with" (with or without trailing space)
-  const OLD_TEXT1A = `"Created by blrain with "`
-  const OLD_TEXT1B = `"Created by blrain with"`
-  if (src.includes(OLD_TEXT1A)) {
-    src = src.replace(OLD_TEXT1A, `"由 blrain 基于 "`)
-    writeFileSync(abs, src, "utf-8")
-    console.log(`[patch-footer] ✅ Patched ${rel} ("Created by blrain with " → "由 blrain 基于 ")`)
-    patched++
-    continue
-  }
-  if (src.includes(OLD_TEXT1B)) {
-    src = src.replace(OLD_TEXT1B, `"由 blrain 基于"`)
-    writeFileSync(abs, src, "utf-8")
-    console.log(`[patch-footer] ✅ Patched ${rel} ("Created by blrain with" → "由 blrain 基于")`)
-    patched++
-    continue
-  }
-
-  // Case 3: Previously patched with "create by blrain with "
-  const OLD_TEXT2 = `"create by blrain with "`
-  if (src.includes(OLD_TEXT2)) {
-    src = src.replace(OLD_TEXT2, `"由 blrain 基于 "`)
-    writeFileSync(abs, src, "utf-8")
-    console.log(`[patch-footer] ✅ Patched ${rel} ("create by" → "由 blrain 基于 ")`)
-    patched++
-    continue
-  }
-
-  // Case 4: Already has the Chinese text
-  if (src.includes(`"由 blrain 基于"`)) {
+  // Check if already patched
+  if (src.includes('"blrain 2026"')) {
     console.log(`[patch-footer] Already up-to-date: ${rel}`)
     patched++
     continue
   }
 
-  console.log(`[patch-footer] No matching pattern in ${rel} — skipping`)
+  // Find the footer u2() block and replace it
+  const idx = src.indexOf('u2("footer"')
+  if (idx < 0) {
+    console.log(`[patch-footer] No footer component in ${rel} — skipping`)
+    continue
+  }
+
+  // Check if it contains any of our known patterns
+  const hasKnownContent = OLD_SNIPPETS.some((s) => src.includes(s))
+  if (!hasKnownContent && !src.includes("i18n(cfg")) {
+    console.log(`[patch-footer] Unknown footer content in ${rel} — skipping`)
+    continue
+  }
+
+  // Simple line-based approach: find the u2("footer" block and its matching closing ] })
+  const before = src.slice(0, idx)
+  const after = src.slice(idx)
+  const endIdx = after.indexOf("] })")
+  if (endIdx < 0) {
+    console.log(`[patch-footer] Cannot find end of footer block in ${rel} — skipping`)
+    continue
+  }
+  // Find the right closing ] }) - need to account for nested brackets
+  let depth = 0
+  let foundEnd = -1
+  for (let i = 0; i < after.length; i++) {
+    if (after[i] === "{" || after[i] === "[") depth++
+    else if (after[i] === "}" || after[i] === "]") {
+      depth--
+      if (depth === 0 && after[i] === "]" && after[i + 1] === " " && after[i + 2] === "}") {
+        foundEnd = i + 2 // include })
+        break
+      }
+    }
+  }
+  if (foundEnd < 0) {
+    console.log(`[patch-footer] Cannot find balanced end of footer block in ${rel} — skipping`)
+    continue
+  }
+
+  const newSrc = before + NEW_FOOTER + after.slice(foundEnd + 1)
+  writeFileSync(abs, newSrc, "utf-8")
+  console.log(`[patch-footer] ✅ Patched ${rel}`)
+  patched++
 }
 
 if (patched === 0) {
