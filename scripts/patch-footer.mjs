@@ -31,12 +31,20 @@ for (const rel of targets) {
     continue
   }
 
-  // Case 2: Previously patched with "Created by blrain with "
-  const OLD_TEXT1 = `"Created by blrain with "`
-  if (src.includes(OLD_TEXT1)) {
-    src = src.replace(OLD_TEXT1, `"由 blrain 基于 "`)
+  // Case 2: Previously patched with "Created by blrain with" (with or without trailing space)
+  const OLD_TEXT1A = `"Created by blrain with "`
+  const OLD_TEXT1B = `"Created by blrain with"`
+  if (src.includes(OLD_TEXT1A)) {
+    src = src.replace(OLD_TEXT1A, `"由 blrain 基于 "`)
     writeFileSync(abs, src, "utf-8")
-    console.log(`[patch-footer] ✅ Patched ${rel} ("Created by" → "由 blrain 基于 ")`)
+    console.log(`[patch-footer] ✅ Patched ${rel} ("Created by blrain with " → "由 blrain 基于 ")`)
+    patched++
+    continue
+  }
+  if (src.includes(OLD_TEXT1B)) {
+    src = src.replace(OLD_TEXT1B, `"由 blrain 基于"`)
+    writeFileSync(abs, src, "utf-8")
+    console.log(`[patch-footer] ✅ Patched ${rel} ("Created by blrain with" → "由 blrain 基于")`)
     patched++
     continue
   }
