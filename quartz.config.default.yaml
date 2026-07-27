@@ -112,7 +112,7 @@ plugins:
       enableSiteMap: true
       enableRSS: true
   - source: github:quartz-community/favicon
-    enabled: true
+    enabled: false
   - source: github:quartz-community/og-image
     enabled: true
   - source: github:quartz-community/cname
