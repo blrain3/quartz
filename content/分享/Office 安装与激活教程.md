@@ -21,7 +21,15 @@ tags:
 
 ## 下载安装 Office
 
-### 使用 Office Tool Plus 安装
+Office 的安装文件可以从微软官方获取，也可以通过第三方工具下载。
+
+### 方式一：从 MAS 下载官方镜像
+
+[MAS 官网](https://massgrave.dev/genuine-installation-media) 提供了 Office 2016 / 2019 / 2021 / 2024 各版本的官方安装镜像（ISO）下载链接，包含专业增强版（Professional Plus）等多种版本。下载后直接运行 `setup.exe` 即可安装。
+
+> 相比于第三方工具，这种方式直接从微软服务器获取文件，仅通过 MAS 页面提供索引链接。
+
+### 方式二：使用 Office Tool Plus 安装
 
 [Office Tool Plus](http://otp.landian.vip/redirect/download.php) 是一款免费的 Office 部署工具，可以自定义下载和安装 Office。
 
