@@ -1,12 +1,13 @@
 ---
 title: HTTP
 date: 2025-06-05
+tags:
+  - 网络协议
 ---
 
 [[TCP|TCP]] 为 HTTP 提供可靠的传输层基础。
 
-[HTTP](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Guides/Overview)（HyperText Transfer Protocol，超文本传输协议）是浏览器（客户端）和服务器之间传递数据的一套规则。可以把它理解成：
->浏览器和网站服务器"聊天"时使用的语言。
+HTTP（HyperText Transfer Protocol，超文本传输协议）是浏览器（客户端）和服务器之间传递数据的规则集合。HTTP 作为应用层协议，运行在 [[TCP]] 提供的可靠传输基础之上。
 
 ![HTTP 作为应用层协议，处于 TCP（传输层）和 IP（网络层）之上](https://mdn.github.io/shared-assets/images/diagrams/http/overview/http-layers.svg)
 

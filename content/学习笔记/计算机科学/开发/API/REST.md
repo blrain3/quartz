@@ -1,6 +1,8 @@
 ---
 title: REST
 date: 2025-05-12
+tags:
+  - API
 ---
 
 [**REST**](https://en.wikipedia.org/wiki/REST)（Representational State Transfer，表征状态转移），是一种[软件架构风格](https://en.wikipedia.org/wiki/Software_architectural_style "Software architectural style") ，旨在描述并指导[万维网](https://en.wikipedia.org/wiki/World_Wide_Web "World Wide Web")架构的设计与开发。

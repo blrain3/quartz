@@ -1,6 +1,8 @@
 ---
 title: Termux
 date: 2025-03-22
+tags:
+  - Termux
 ---
 
 Termux 是一款**无需 Root 权限**的 Android 终端模拟器和 Linux 环境应用。它能在手机上提供完整的 Linux 命令行体验，支持包管理、编程、脚本运行等。

@@ -1,6 +1,8 @@
 ---
 title: TCP
 date: 2025-08-18
+tags:
+  - 网络协议
 ---
 
 **TCP**（传输控制协议）是一个让两个主机相互连接并传输数据流的重要的网络[协议](https://developer.mozilla.org/zh-CN/docs/Glossary/Protocol)。TCP 保证了数据和包以发送时的顺序的传输，是互联网上最广泛使用的传输层协议。

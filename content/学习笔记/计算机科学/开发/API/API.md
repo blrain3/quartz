@@ -1,6 +1,8 @@
 ---
 title: API
 date: 2025-05-05
+tags:
+  - API
 ---
 
 [API](https://en.wikipedia.org/wiki/API)（Application Programming Interface，应用程序编程接口） 是软件组件之间互相**通信**的“契约”和“窗口”——它规定了一个程序如何请求另一个程序提供的数据或功能，同时隐藏内部实现细节。

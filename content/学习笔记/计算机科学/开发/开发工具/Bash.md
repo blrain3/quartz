@@ -1,6 +1,9 @@
 ---
 title: Bash
 date: 2025-03-15
+tags:
+  - Bash
+  - Shell
 ---
 
 **Bash**，[Unix shell](https://zh.wikipedia.org/wiki/Unix_shell "Unix shell")的一种，在1987年由[布莱恩·福克斯](https://zh.wikipedia.org/wiki/%E5%B8%83%E8%90%8A%E6%81%A9%C2%B7%E7%A6%8F%E5%85%8B%E6%96%AF "布莱恩·福克斯")为了[GNU计划](https://zh.wikipedia.org/wiki/GNU%E8%A8%88%E5%8A%83 "GNU计划")而编写。1989年发布第一个正式版本，原先是计划用在[GNU](https://zh.wikipedia.org/wiki/GNU "GNU")操作系统上，但能运行于大多数[类Unix系统](https://zh.wikipedia.org/wiki/%E7%B1%BBUnix%E7%B3%BB%E7%BB%9F "类Unix系统")的操作系统之上，包括[Linux](https://zh.wikipedia.org/wiki/Linux "Linux")与[Mac OS X v10.4](https://zh.wikipedia.org/wiki/Mac_OS_X_v10.4 "Mac OS X v10.4")起至[macOS Mojave](https://zh.wikipedia.org/wiki/MacOS_Mojave "MacOS Mojave")都将它作为默认shell，而自[macOS Catalina](https://zh.wikipedia.org/wiki/MacOS_Catalina "MacOS Catalina")，默认Shell以[zsh](https://zh.wikipedia.org/wiki/Zsh "Zsh")取代。

@@ -1,6 +1,9 @@
 ---
 title: Nginx
 date: 2025-06-15
+tags:
+  - Nginx
+  - 服务器
 ---
 
 Nginx 常用于 [[托管|网站托管]] 场景。

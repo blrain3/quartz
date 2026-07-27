@@ -1,6 +1,9 @@
 ---
 title: JWT
 date: 2025-05-28
+tags:
+  - 认证
+  - 安全
 ---
 
 [**JSON Web Token**](https://en.wikipedia.org/wiki/JSON_Web_Token)，是一项[拟定的互联网标准](https://en.wikipedia.org/wiki/Internet_Standard#Proposed_Standard "Internet Standard") ，用于创建带有可选[签名](<https://en.wikipedia.org/wiki/Signature_(cryptography)> "Signature (cryptography)")和/或可选[加密](https://en.wikipedia.org/wiki/Encryption "Encryption")的数据，其[载荷](<https://en.wikipedia.org/wiki/Payload_(computing)> "Payload (computing)")包含 [JSON](https://en.wikipedia.org/wiki/JSON "JSON")，用于声明若干[声明](https://en.wikipedia.org/wiki/Claims-based_identity "Claims-based identity") 。这些令牌使用[私有密钥](https://en.wikipedia.org/wiki/Shared_secret "Shared secret")或[公钥/私钥](https://en.wikipedia.org/wiki/Public-key_cryptography "Public-key cryptography")进行签名。

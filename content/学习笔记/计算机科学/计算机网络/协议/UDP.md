@@ -1,6 +1,8 @@
 ---
 title: UDP
 date: 2025-10-12
+tags:
+  - 网络协议
 ---
 
 **UDP**（User Datagram Protocol，用户数据报协议）是另一种传输层[协议](https://developer.mozilla.org/zh-CN/docs/Glossary/Protocol)，和 TCP 处于同一层，但走的完全是另一条路子。它在互联网上用于**特别时间敏感**的传输，例如视频播放或 DNS 查询。

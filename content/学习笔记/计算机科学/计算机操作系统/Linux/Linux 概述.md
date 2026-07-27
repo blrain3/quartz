@@ -1,6 +1,8 @@
 ---
 title: Linux 概述
 date: 2025-07-05
+tags:
+  - Linux
 ---
 
 [Linux](https://zh.wikipedia.org/wiki/Linux),是一种[自由和开放源码](https://zh.wikipedia.org/wiki/%E8%87%AA%E7%94%B1%E5%8F%8A%E5%BC%80%E6%94%BE%E6%BA%90%E4%BB%A3%E7%A0%81%E8%BD%AF%E4%BB%B6 "自由及开放源代码软件")的[类Unix](https://zh.wikipedia.org/wiki/%E7%B1%BBUnix%E7%B3%BB%E7%BB%9F "类Unix系统")[操作系统](https://zh.wikipedia.org/wiki/%E4%BD%9C%E6%A5%AD%E7%B3%BB%E7%B5%B1 "操作系统")。该操作系统的[内核](https://zh.wikipedia.org/wiki/%E5%86%85%E6%A0%B8 "内核")由[林纳斯·托瓦兹](https://zh.wikipedia.org/wiki/%E6%9E%97%E7%BA%B3%E6%96%AF%C2%B7%E6%89%98%E7%93%A6%E5%85%B9 "林纳斯·托瓦兹")在1991年10月5日首次发布。

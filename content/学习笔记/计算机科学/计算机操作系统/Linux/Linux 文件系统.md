@@ -1,6 +1,8 @@
 ---
 title: Linux 文件系统
 date: 2025-07-20
+tags:
+  - Linux
 ---
 
 ## Linux 文件系统层级结构
