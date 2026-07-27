@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json
 configuration:
-  pageTitle: "( ˵ •̀ ᴗ •́˵)"
+  pageTitle: "首页"
   pageTitleSuffix: ""
   enableSPA: true
   enablePopovers: true
@@ -21,25 +21,25 @@ configuration:
       code: IBM Plex Mono
     colors:
       lightMode:
-        light: "#fdf6e3"
-        lightgray: "#e5ddc7"
-        gray: "#a6b0a0"
-        darkgray: "#5c6a72"
-        dark: "#3a4a53"
-        secondary: "#a7c080"
-        tertiary: "#7fbbb3"
-        highlight: rgba(167, 192, 128, 0.15)
-        textHighlight: "#d3c6aa88"
+        light: "#ffffff"
+        lightgray: "#f2f2f2"
+        gray: "#808080"
+        darkgray: "#4d4d4d"
+        dark: "#000000"
+        secondary: "#666666"
+        tertiary: "#333333"
+        highlight: rgba(0, 0, 0, 0.08)
+        textHighlight: "#ffff8a80"
       darkMode:
-        light: "#2d353b"
-        lightgray: "#475258"
-        gray: "#859289"
-        darkgray: "#d3c6aa"
-        dark: "#e6e2cc"
-        secondary: "#a7c080"
-        tertiary: "#7fbbb3"
-        highlight: rgba(167, 192, 128, 0.15)
-        textHighlight: "#e6984a88"
+        light: "#1a1a1a"
+        lightgray: "#2e2e2e"
+        gray: "#808080"
+        darkgray: "#bfbfbf"
+        dark: "#ffffff"
+        secondary: "#999999"
+        tertiary: "#cccccc"
+        highlight: rgba(255, 255, 255, 0.08)
+        textHighlight: "#ffd70088"
 plugins:
   - source: github:quartz-community/created-modified-date
     enabled: true
