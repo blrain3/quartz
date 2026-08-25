@@ -1,0 +1,6 @@
+interface:
+  display_name: "Quartz"
+  short_description: "Repo-specific patterns and workflows for quartz"
+  default_prompt: "Use the quartz repo skill to follow existing architecture, testing, and workflow conventions."
+policy:
+  allow_implicit_invocation: true
