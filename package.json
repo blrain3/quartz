@@ -43,6 +43,8 @@
     "@floating-ui/dom": "^1.7.4",
     "@myriaddreamin/rehype-typst": "^0.6.0",
     "@napi-rs/simple-git": "0.1.22",
+    "@quartz-community/types": "github:quartz-community/types#d413569b02ff0cd9a7e8d74dee125d20a5e5ec72",
+    "@quartz-community/utils": "github:quartz-community/utils#e09d8b0bbccb46073b23c00affaf3e40a2c3b0c4",
     "ansi-truncate": "^1.4.0",
     "async-mutex": "^0.5.0",
     "chokidar": "^5.0.0",
@@ -74,8 +76,6 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "@quartz-community/types": "github:quartz-community/types",
-    "@quartz-community/utils": "github:quartz-community/utils",
     "@types/hast": "^3.0.4",
     "@types/node": "^25.0.10",
     "@types/pretty-time": "^1.1.5",
