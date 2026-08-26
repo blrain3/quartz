@@ -21,7 +21,8 @@
     "install-plugins": "npx tsx ./quartz/plugins/loader/install-plugins.ts",
     "patch": "node scripts/patch-graph.mjs && node scripts/patch-footer.mjs && node scripts/patch-search.mjs",
     "prebuild": "node scripts/patch-graph.mjs && node scripts/patch-footer.mjs && node scripts/patch-search.mjs",
-    "build": "npx quartz build"
+    "build": "npx quartz build",
+    "postbuild": "node scripts/patch-graph-output.mjs"
   },
   "engines": {
     "npm": ">=10.9.2",
