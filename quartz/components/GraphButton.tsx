@@ -1,3 +1,7 @@
+// STATUS: UNUSED — Graph plugin is disabled in quartz.config.default.yaml.
+// This component is retained for potential future re-enablement.
+// To use: enable the graph plugin in config and reference GraphButton in layout.
+//
 // Minimal home-page "Graph View" trigger.
 // Renders only the global-graph button + hidden popover container that the
 // graph plugin's `afterDOMLoaded` script wires up via
