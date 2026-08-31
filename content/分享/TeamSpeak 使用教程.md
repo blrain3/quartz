@@ -5,7 +5,6 @@ tags:
   - 分享
   - 教程
 ---
-
 TeamSpeak 是一款跨平台的语音通信软件，广泛应用于游戏、线上会议等场景。目前主要有 **TeamSpeak 3（TS3）** 和 **TeamSpeak 6（TS6）** 两个版本，支持 Windows、macOS 和 Linux。
 
 ---
