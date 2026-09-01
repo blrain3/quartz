@@ -9,7 +9,7 @@
 
 ### 1.1 Dockerfile 缺少补丁步骤
 
-**问题**: `Dockerfile` 中构建阶段执行了 `npm ci; npx quartz plugin install`，但未运行补丁脚本（`patch-graph.mjs`、`patch-footer.mjs`、`patch-search.mjs`）。由于 `prebuild` 钩子在 `npx quartz build` 时自动触发，Docker 内最终构建（`CMD ["npx", "quartz", "build", "--serve"]`）的 `prebuild` 会覆盖已安装的插件文件。但如果 Docker 构建阶段单独运行 `plugin install` 后需要验证补丁效果，则补丁不在该阶段生效。
+**问题**: `Dockerfile` 中构建阶段执行了 `npm ci; npx quartz plugin install`，但未运行补丁脚本（`patch-graph.mjs`、`patch-search.mjs`）。由于 `prebuild` 钩子在 `npx quartz build` 时自动触发，Docker 内最终构建（`CMD ["npx", "quartz", "build", "--serve"]`）的 `prebuild` 会覆盖已安装的插件文件。但如果 Docker 构建阶段单独运行 `plugin install` 后需要验证补丁效果，则补丁不在该阶段生效。
 
 **影响**: Docker 容器中首次 `build` 时，`prebuild` 会正确执行补丁。但若容器内重新安装插件（如排障场景），补丁不会自动应用。此外 `patch-graph-output.mjs` 完全未集成到任何 npm script 中。
 
@@ -37,7 +37,7 @@
 
 **问题**: `patch-graph.mjs` 中匹配 `function we(){let u=window.location.pathname` — 其中 `we` 是 esbuild 最小化后的函数名。如果插件更新导致最小化结果变化（不同的函数名/结构），补丁将静默失败（输出 "No match in file, skipping"）。
 
-同样，`patch-footer.mjs` 依赖 `u2("footer"` 这个最小化后的函数名，以及 `" ] })` 括号匹配逻辑。`patch-search.mjs` 依赖精确字符串匹配 `"No results."` 和 `"Try another search term?"`。
+`patch-search.mjs` 依赖精确字符串匹配 `"No results."` 和 `"Try another search term?"`。（原 `patch-footer.mjs` 曾依赖 `u2("footer"` 最小化函数名与 `" ] })` 括号匹配逻辑，该脚本已随 footer 单一职责改造删除。）
 
 **影响**: 任何插件版本更新都可能导致补丁失效，且失效时仅输出日志警告，不会中断构建。用户可能在不察觉的情况下发布未修补的站点。
 
@@ -63,37 +63,41 @@
 
 ## 二、中优先级（应在下次迭代中处理）
 
-### 2.1 `MyFooter.tsx` 返回 null — Footer 双重覆盖逻辑混乱
+### 2.1 ✅ 已解决 — Footer 双重覆盖逻辑
 
-**问题**: `config-loader.ts` 第 682-683 行使用本地 `MyFooter` 组件替代插件 footer，但 `MyFooter` 返回 `null`（不渲染任何内容）。实际的 footer 文本 "blrain 2026" 通过 `patch-footer.mjs` 直接修改编译后的插件 footer 代码实现。
-
-这形成了双重覆盖：
+**原问题**: `config-loader.ts` 第 682-683 行使用本地 `MyFooter` 组件替代插件 footer，但 `MyFooter` 返回 `null`（不渲染任何内容）。实际的 footer 文本通过 `patch-footer.mjs` 直接修改编译后的插件 footer 代码实现，形成双重覆盖：
 
 1. config-loader 层面：用空 `MyFooter` 替代插件 footer
 2. 补丁层面：直接修改插件编译产物
 
-由于 `MyFooter` 返回 null 且被设为默认 footer，插件 footer 的补丁实际不生效（被 MyFooter 覆盖了）。Footer 文本可能完全不会显示。
+由于 `MyFooter` 返回 null 且被设为默认 footer，插件 footer 的补丁实际不生效（被 MyFooter 覆盖）。
 
-**影响**: 站点可能没有 footer 内容。或者如果 `MyFooter` 被旁路（如某些渲染路径直接使用插件 footer），则行为不一致。
+**已采用的方案（方案 A）**:
 
-**建议方案**:
-
-- **方案 A（推荐）**: 让 `MyFooter.tsx` 直接返回包含 "blrain 2026" 的 JSX，移除 `patch-footer.mjs` 及其在 `prebuild` 中的引用。这是最干净的方案 — 不依赖修改编译产物。
+- `MyFooter.tsx` 直接返回 JSX，成为 footer 的唯一来源（单一职责）
+- `scripts/patch-footer.mjs` 已删除；`.quartz/plugins/footer` 已 `git checkout` 还原为上游原始状态（补丁痕迹一并由插件自身的 git 恢复）
+- footer 内容现为 ICP 备案链接：
 
   ```tsx
   export default (() => {
     const MyFooter: QuartzComponent = () => {
       return (
         <footer>
-          <p>blrain 2026</p>
+          <p>
+            <a
+              href="https://icp.gov.moe/?keyword=20260697"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              萌ICP备20260697号
+            </a>
+          </p>
         </footer>
       )
     }
     return MyFooter
   }) satisfies QuartzComponentConstructor
   ```
-
-- **方案 B**: 移除 `MyFooter.tsx` 覆盖逻辑，完全依赖 `patch-footer.mjs` 修改插件 footer。但这种方式更脆弱。
 
 ### 2.2 `GraphButton.tsx` — 孤立的图视图按钮组件
 
@@ -227,18 +231,18 @@
 
 以下按执行顺序整理：
 
-| 序号 | 优先级 | 操作项                                                    | 涉及文件                       | 工作量 |
-| ---- | ------ | --------------------------------------------------------- | ------------------------------ | ------ |
-| 1    | 高     | 修复 Dockerfile 补丁步骤                                  | `Dockerfile`                   | 小     |
-| 2    | 高     | 集成 `patch-graph-output.mjs` 到构建流程                  | `package.json`                 | 小     |
-| 3    | 高     | 运行 `npm audit fix` 修复漏洞                             | `package.json`                 | 小     |
-| 4    | 高     | 为补丁脚本添加版本检测和失败断言                          | `scripts/patch-*.mjs`          | 中     |
-| 5    | 中     | 重写 `MyFooter.tsx` 返回实际内容，移除 `patch-footer.mjs` | `MyFooter.tsx`, `package.json` | 小     |
-| 6    | 中     | 处理 `GraphButton.tsx` 死代码                             | `GraphButton.tsx`              | 小     |
-| 7    | 中     | 创建 `.dockerignore`                                      | `.dockerignore`                | 小     |
-| 8    | 中     | 添加中文排版优化样式                                      | `custom.scss`                  | 小     |
-| 9    | 低     | 在 `ignorePatterns` 中添加 `.claudian`                    | `quartz.config.default.yaml`   | 小     |
-| 10   | 低     | 检查并更新 `@quartz-community/*` 依赖                     | `package.json`                 | 中     |
+| 序号 | 优先级 | 操作项                                                       | 涉及文件                     | 工作量 |
+| ---- | ------ | ------------------------------------------------------------ | ---------------------------- | ------ |
+| 1    | 高     | 修复 Dockerfile 补丁步骤                                     | `Dockerfile`                 | 小     |
+| 2    | 高     | 集成 `patch-graph-output.mjs` 到构建流程                     | `package.json`               | 小     |
+| 3    | 高     | 运行 `npm audit fix` 修复漏洞                                | `package.json`               | 小     |
+| 4    | 高     | 为补丁脚本添加版本检测和失败断言                             | `scripts/patch-*.mjs`        | 中     |
+| 5    | 中     | ✅ 重写 `MyFooter.tsx` 返回实际内容，删除 `patch-footer.mjs` | `MyFooter.tsx`, `scripts/`   | 小     |
+| 6    | 中     | 处理 `GraphButton.tsx` 死代码                                | `GraphButton.tsx`            | 小     |
+| 7    | 中     | 创建 `.dockerignore`                                         | `.dockerignore`              | 小     |
+| 8    | 中     | 添加中文排版优化样式                                         | `custom.scss`                | 小     |
+| 9    | 低     | 在 `ignorePatterns` 中添加 `.claudian`                       | `quartz.config.default.yaml` | 小     |
+| 10   | 低     | 检查并更新 `@quartz-community/*` 依赖                        | `package.json`               | 中     |
 
 ---
 
@@ -252,7 +256,7 @@
 
 ### 第二阶段（下次迭代）
 
-4. 重写 `MyFooter.tsx`，移除 `patch-footer.mjs` 依赖
+4. ✅ 重写 `MyFooter.tsx`，删除 `patch-footer.mjs`（并还原插件 footer 产物）
 5. 为补丁脚本添加 SHA 版本检测
 6. 创建 `.dockerignore`
 7. 清理死代码（`GraphButton.tsx`）

@@ -5,7 +5,6 @@ export default (() => {
     return (
       <footer>
         <p>
-          blrain 2026 ·{" "}
           <a href="https://icp.gov.moe/?keyword=20260697" target="_blank" rel="noopener noreferrer">
             萌ICP备20260697号
           </a>
