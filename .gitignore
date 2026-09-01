@@ -1,5 +1,4 @@
 .DS_Store
-.gitignore
 node_modules
 public
 prof
@@ -12,3 +11,4 @@ replit.nix
 .quartz/
 quartz/cli/tui/dist/
 .claudian
+.workbuddy
