@@ -1,10 +1,10 @@
 import { i18n } from "../i18n"
-import { getFileExtension, joinSegments } from "../util/path"
+import { FullSlug, getFileExtension, joinSegments, pathToRoot } from "../util/path"
 import { CSSResourceToStyleElement, JSResourceToScriptElement } from "../util/resources"
 import { googleFontHref, googleFontSubsetHref } from "../util/theme"
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import { unescapeHTML } from "../util/escape"
-import { CustomOgImagesEmitterName } from "../../.quartz/plugins"
+
 export default (() => {
   const Head: QuartzComponent = ({
     cfg,
@@ -23,13 +23,15 @@ export default (() => {
     const { css, js, additionalHead } = externalResources
 
     const url = new URL(`https://${cfg.baseUrl ?? "example.com"}`)
+    const path = url.pathname as FullSlug
+    const baseDir = fileData.slug === "404" ? path : pathToRoot(fileData.slug!)
+    const iconPath = joinSegments(baseDir, "static/icon.png")
+
     // Url of current page
     const socialUrl =
       fileData.slug === "404" ? url.toString() : joinSegments(url.toString(), fileData.slug!)
 
-    const usesCustomOgImage = ctx.cfg.plugins.emitters.some(
-      (e) => e.name === CustomOgImagesEmitterName,
-    )
+    const usesCustomOgImage = ctx.cfg.plugins.emitters.some((e) => e.name === "CustomOgImages")
     const ogImageDefaultPath = `https://${cfg.baseUrl}/static/og-image.png`
 
     const coreStylesheet = css[0]?.content
@@ -87,6 +89,7 @@ export default (() => {
           </>
         )}
 
+        <link rel="icon" href={iconPath} />
         <meta name="description" content={description} />
         <meta name="generator" content="Quartz" />
 

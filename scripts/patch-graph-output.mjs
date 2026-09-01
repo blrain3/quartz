@@ -4,7 +4,10 @@
 // which uniquely identifies the slug-from-URL function in postscript.js.
 // This runs after `npx quartz build` via the `postbuild` npm script.
 //
-// SAFETY: This pattern is specific to the graph plugin at commit 46f0ba1.
+// Since the upstream v5 merge, the graph plugin comes from npm
+// (@quartz-community/graph) instead of a git clone tracked in quartz.lock.json.
+//
+// SAFETY: This pattern is specific to @quartz-community/graph@0.1.0.
 // If the plugin is updated, the minified output may change. The script will
 // log a warning but will not fail the build (postscript is a build artifact
 // and the graph plugin is currently disabled).
@@ -14,26 +17,24 @@ import { resolve } from "path"
 
 const root = resolve(import.meta.dirname, "..")
 
-const EXPECTED_COMMIT = "46f0ba1c3c0cc484697572e7bcf315fa384d80d2"
+const PLUGIN_PKG = "@quartz-community/graph"
+const EXPECTED_VERSION = "0.1.0"
 
-function checkLockVersion() {
-  const lockPath = resolve(root, "quartz.lock.json")
-  if (!existsSync(lockPath)) {
-    console.warn(`[patch-graph-output] Warning: quartz.lock.json not found, skipping version check`)
-    return
-  }
-  const lock = JSON.parse(readFileSync(lockPath, "utf-8"))
-  const entry = lock.plugins?.["graph"]
-  if (!entry) {
-    console.warn(`[patch-graph-output] Warning: graph not in lockfile, skipping version check`)
-    return
-  }
-  if (entry.commit !== EXPECTED_COMMIT) {
+function checkVersion() {
+  const pkgPath = resolve(root, "node_modules", PLUGIN_PKG, "package.json")
+  if (!existsSync(pkgPath)) {
     console.warn(
-      `[patch-graph-output] Warning: graph plugin commit mismatch.` +
-      `\n  Expected: ${EXPECTED_COMMIT}` +
-      `\n  Actual:   ${entry.commit}` +
-      `\n  The postscript pattern may have changed.`,
+      `[patch-graph-output] Warning: ${PLUGIN_PKG} not installed, skipping version check`,
+    )
+    return
+  }
+  const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"))
+  if (pkg.version !== EXPECTED_VERSION) {
+    console.warn(
+      `[patch-graph-output] Warning: graph plugin version mismatch.` +
+        `\n  Expected: ${EXPECTED_VERSION}` +
+        `\n  Actual:   ${pkg.version}` +
+        `\n  The postscript pattern may have changed.`,
     )
   }
 }
@@ -51,7 +52,12 @@ for (const f of files) {
 // Fallback: unhashed postscript.js (local dev build)
 if (!postscript) {
   const fallback = resolve(root, "public", "postscript.js")
-  try { readFileSync(fallback); postscript = fallback } catch { /* not found */ }
+  try {
+    readFileSync(fallback)
+    postscript = fallback
+  } catch {
+    /* not found */
+  }
 }
 
 if (!postscript) {
@@ -59,7 +65,7 @@ if (!postscript) {
   process.exit(0)
 }
 
-checkLockVersion()
+checkVersion()
 
 let src = readFileSync(postscript, "utf-8")
 let count = 0
@@ -67,8 +73,8 @@ let count = 0
 // Replace only window.location.pathname;return p.endsWith("/")
 // This is the signature of getFullSlugFromUrl (minified).
 // Other location.pathname uses (SPA nav comparisons) are left untouched.
-const OLD = "window.location.pathname;return p.endsWith(\"/"
-const NEW = "decodeURIComponent(window.location.pathname);return p.endsWith(\"/"
+const OLD = 'window.location.pathname;return p.endsWith("/'
+const NEW = 'decodeURIComponent(window.location.pathname);return p.endsWith("/'
 
 // Regex fallback for minor minification changes
 const OLD_REGEX = /window\.location\.pathname;return\s+\w+\.endsWith\("\/"/
@@ -104,5 +110,7 @@ writeFileSync(postscript, src, "utf-8")
 if (count > 0) {
   console.log(`[patch-graph-output] Patched ${count} occurrence(s) in ${postscript}`)
 } else {
-  console.log(`[patch-graph-output] Pattern not found in ${postscript}. Already patched or graph code changed?`)
+  console.log(
+    `[patch-graph-output] Pattern not found in ${postscript}. Already patched or graph code changed?`,
+  )
 }

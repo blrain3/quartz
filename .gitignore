@@ -12,3 +12,4 @@ replit.nix
 quartz/cli/tui/dist/
 .claudian
 .workbuddy
+.turbo/

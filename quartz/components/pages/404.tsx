@@ -9,23 +9,6 @@ const NotFound: QuartzComponent = ({ cfg, ctx }: QuartzComponentProps) => {
     <article class="popover-hint">
       <h1>404</h1>
       <p>{i18n(cfg.locale).pages.error.notFound}</p>
-      <pre style="font-size: 0.8rem; line-height: 2.0; margin: 1rem 0;">
-{`          ██████████                _________________
-        ██░░░░░░░░░░██             | You got lost... |
-      ██░░░░░░░░░░░░░░██         🗩 ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
-    ██░░██░░░░░░██░░░░░░██     🗩
-    ██░░██░░░░░░██░░▒▒░░██
-    ██░░░░░░░░░░░░░░▒▒░░██
-      ██▒▒▒▒▒▒▒▒▒▒▒▒░░██
-        ██████████████
-    ████░░░░██░░░░▒▒████
-  ██░░░░░░██░░░░░░▒▒██▒▒██
-██░░░░██▒▒▒▒▒▒▒▒▒▒██░░▒▒▒▒██
-██▒▒░░░░██████████░░░░▒▒██▒▒██
-██▒▒░░░░░░░░░░░░░░░░░░▒▒██▒▒██
-  ██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒████▒▒██
-    ██████████████████    ██`}
-      </pre>
       <a href={baseDir}>{i18n(cfg.locale).pages.error.home}</a>
       <script
         dangerouslySetInnerHTML={{

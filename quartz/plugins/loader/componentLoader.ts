@@ -1,6 +1,6 @@
 import { componentRegistry } from "../../components/registry"
 import { ComponentManifest, PluginManifest } from "./types"
-import { QuartzComponent, QuartzComponentConstructor } from "../../components/types"
+import { QuartzComponentConstructor } from "../../components/types"
 import { getPluginSubpathEntry, toFileUrl } from "./gitLoader"
 
 export async function loadComponentsFromPackage(
@@ -61,46 +61,6 @@ export async function loadComponentsFromPackage(
           pluginName,
           componentEntries[0][1] as ComponentManifest,
         )
-      }
-    }
-
-    // Replace the graph plugin's heavy local-graph component with a minimal
-    // button-only version while keeping its css/afterDOMLoaded so the global
-    // graph popover keeps working.
-    if (pluginName === "@quartz-community/graph") {
-      console.log("[GraphButton] patching graph component for", pluginName)
-      const GraphModule = (await import("../../components/GraphButton")).default as (
-        opts?: Record<string, unknown>,
-      ) => QuartzComponent
-      const originalGraph = componentsModule["Graph"] as
-        | QuartzComponentConstructor
-        | undefined
-      let originalCss: unknown
-      let originalScript: unknown
-      if (originalGraph && typeof originalGraph === "function") {
-        try {
-          const orig = (originalGraph as unknown as () => QuartzComponent)()
-          originalCss = (orig as QuartzComponent).css
-          originalScript = (orig as QuartzComponent).afterDOMLoaded
-        } catch {
-          // ignore — fall back to no attached assets
-        }
-      }
-
-      const Wrapped = ((opts?: Record<string, unknown>) => {
-        const button = GraphModule(opts)
-        if (originalCss !== undefined) button.css = originalCss as any
-        if (originalScript !== undefined) button.afterDOMLoaded = originalScript as any
-        return button
-      }) as QuartzComponentConstructor
-
-      for (const key of [
-        "@quartz-community/graph/Graph",
-        "Graph",
-        "@quartz-community/graph",
-        "graph",
-      ]) {
-        componentRegistry.register(key, Wrapped, pluginName, componentEntries[0]?.[1])
       }
     }
   } catch {

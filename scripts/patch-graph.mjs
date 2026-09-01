@@ -1,9 +1,13 @@
 // Patch graph plugin: decodeURIComponent for Chinese URL slugs
-// Runs after `npx quartz plugin install` to fix getFullSlugFromUrl
+// Runs after `npm install` / `npx quartz plugin install` to fix getFullSlugFromUrl
+//
+// Since the upstream v5 merge, plugins are installed from npm
+// (@quartz-community/graph) instead of git clones under .quartz/plugins.
+// This patch targets node_modules and verifies the installed npm version.
 //
 // SAFETY: This patch depends on the minified function name `we` which is
-// specific to the graph plugin at commit 46f0ba1. If the plugin is updated,
-// the minified name will likely change and this patch will fail. The script
+// specific to @quartz-community/graph@0.1.0. If the plugin is updated, the
+// minified name will likely change and this patch will fail. The script
 // enforces failure (exit code 1) when the pattern is not found in existing
 // files, so the issue is caught at build time rather than silently skipped.
 
@@ -14,42 +18,37 @@ import { fileURLToPath } from "url"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = resolve(__dirname, "..")
 
-const EXPECTED_COMMIT = "46f0ba1c3c0cc484697572e7bcf315fa384d80d2"
-const PLUGIN_NAME = "graph"
+const PLUGIN_PKG = "@quartz-community/graph"
+const EXPECTED_VERSION = "0.1.0"
 
 const targets = [
-  ".quartz/plugins/graph/dist/index.js",
-  ".quartz/plugins/graph/dist/components/index.js",
+  "node_modules/@quartz-community/graph/dist/index.js",
+  "node_modules/@quartz-community/graph/dist/components/index.js",
 ]
 
 // Pattern: minified function that reads window.location.pathname for slug matching.
 // The function name `we` is esbuild's minified output and is tied to the specific
-// plugin version at EXPECTED_COMMIT. If the pattern changes, update OLD and
-// verify against the new plugin source.
+// plugin version. If the pattern changes, update OLD and verify against the new
+// plugin source.
 const OLD = "function we(){let u=window.location.pathname"
 const NEW = "function we(){let u=decodeURIComponent(window.location.pathname)"
 
 // Also try a regex fallback for resilience against minor minification changes
 const OLD_REGEX = /function\s+\w+\(\)\s*\{\s*let\s+\w+\s*=\s*window\.location\.pathname/
 
-function checkLockVersion() {
-  const lockPath = resolve(root, "quartz.lock.json")
-  if (!existsSync(lockPath)) {
-    console.warn(`[patch-graph] Warning: quartz.lock.json not found, skipping version check`)
+function checkVersion() {
+  const pkgPath = resolve(root, "node_modules", PLUGIN_PKG, "package.json")
+  if (!existsSync(pkgPath)) {
+    console.warn(`[patch-graph] Warning: ${PLUGIN_PKG} not installed, skipping version check`)
     return
   }
-  const lock = JSON.parse(readFileSync(lockPath, "utf-8"))
-  const entry = lock.plugins?.[PLUGIN_NAME]
-  if (!entry) {
-    console.warn(`[patch-graph] Warning: ${PLUGIN_NAME} not in lockfile, skipping version check`)
-    return
-  }
-  if (entry.commit !== EXPECTED_COMMIT) {
+  const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"))
+  if (pkg.version !== EXPECTED_VERSION) {
     console.warn(
-      `[patch-graph] Warning: graph plugin commit mismatch.` +
-      `\n  Expected: ${EXPECTED_COMMIT}` +
-      `\n  Actual:   ${entry.commit}` +
-      `\n  The minified function name may have changed. Verify patch compatibility.`,
+      `[patch-graph] Warning: graph plugin version mismatch.` +
+        `\n  Expected: ${EXPECTED_VERSION}` +
+        `\n  Actual:   ${pkg.version}` +
+        `\n  The minified function name may have changed. Verify patch compatibility.`,
     )
   }
 }
@@ -58,7 +57,7 @@ let patched = 0
 let failed = 0
 let skipped = 0
 
-checkLockVersion()
+checkVersion()
 
 for (const rel of targets) {
   const abs = resolve(root, rel)
@@ -93,7 +92,7 @@ for (const rel of targets) {
     // File exists but pattern not found - this is a failure
     console.error(
       `[patch-graph] ERROR: Pattern not found in ${rel}.` +
-      `\n  The plugin may have been updated. Check the minified output and update the pattern.`,
+        `\n  The plugin may have been updated. Check the minified output and update the pattern.`,
     )
     failed++
     continue

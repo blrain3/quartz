@@ -1,48 +1,51 @@
 // Patch search plugin: Chinese localization for "no results" text
-// Runs after `npx quartz plugin install` to fix hardcoded English strings
+// Runs after `npm install` / `npx quartz plugin install` to fix hardcoded English strings
+//
+// Since the upstream v5 merge, plugins are installed from npm
+// (@quartz-community/search) instead of git clones under .quartz/plugins.
+// This patch targets node_modules and verifies the installed npm version.
 //
 // SAFETY: This patch depends on exact string literals in the search plugin's
-// compiled output at commit 0f4c1a2. If the plugin is updated, the strings
-// may change. The script enforces failure (exit code 1) when strings are not
-// found in existing files.
+// compiled output. If the plugin is updated, the strings may change. The
+// script enforces failure (exit code 1) when strings are not found in
+// existing files.
 
 import { readFileSync, writeFileSync, existsSync } from "fs"
 import { resolve } from "path"
 
 const root = resolve(import.meta.dirname, "..")
 
-const EXPECTED_COMMIT = "0f4c1a233cd03a0f562e13636b89b7708f8e2698"
-const PLUGIN_NAME = "search"
+const PLUGIN_PKG = "@quartz-community/search"
+const EXPECTED_VERSION = "0.1.0"
 
 const targets = [
-  ".quartz/plugins/search/dist/components/index.js",
-  ".quartz/plugins/search/dist/index.js",
+  "node_modules/@quartz-community/search/dist/components/index.js",
+  "node_modules/@quartz-community/search/dist/index.js",
 ]
 
 // Patterns to replace - both exact and regex fallback
 const REPLACEMENTS = [
   { exact: '"No results."', regex: /"No results\."/, replacement: '"没有结果。"' },
-  { exact: '"Try another search term?"', regex: /"Try another search term\?"/, replacement: '"请尝试其他搜索词。"' },
+  {
+    exact: '"Try another search term?"',
+    regex: /"Try another search term\?"/,
+    replacement: '"请尝试其他搜索词。"',
+  },
 ]
 
-function checkLockVersion() {
-  const lockPath = resolve(root, "quartz.lock.json")
-  if (!existsSync(lockPath)) {
-    console.warn(`[patch-search] Warning: quartz.lock.json not found, skipping version check`)
+function checkVersion() {
+  const pkgPath = resolve(root, "node_modules", PLUGIN_PKG, "package.json")
+  if (!existsSync(pkgPath)) {
+    console.warn(`[patch-search] Warning: ${PLUGIN_PKG} not installed, skipping version check`)
     return
   }
-  const lock = JSON.parse(readFileSync(lockPath, "utf-8"))
-  const entry = lock.plugins?.[PLUGIN_NAME]
-  if (!entry) {
-    console.warn(`[patch-search] Warning: ${PLUGIN_NAME} not in lockfile, skipping version check`)
-    return
-  }
-  if (entry.commit !== EXPECTED_COMMIT) {
+  const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"))
+  if (pkg.version !== EXPECTED_VERSION) {
     console.warn(
-      `[patch-search] Warning: search plugin commit mismatch.` +
-      `\n  Expected: ${EXPECTED_COMMIT}` +
-      `\n  Actual:   ${entry.commit}` +
-      `\n  The string literals may have changed. Verify patch compatibility.`,
+      `[patch-search] Warning: search plugin version mismatch.` +
+        `\n  Expected: ${EXPECTED_VERSION}` +
+        `\n  Actual:   ${pkg.version}` +
+        `\n  The string literals may have changed. Verify patch compatibility.`,
     )
   }
 }
@@ -50,7 +53,7 @@ function checkLockVersion() {
 let patched = 0
 let failed = 0
 
-checkLockVersion()
+checkVersion()
 
 for (const rel of targets) {
   const abs = resolve(root, rel)
@@ -87,8 +90,8 @@ for (const rel of targets) {
     // File exists but no patterns matched - this is a failure
     console.error(
       `[patch-search] ERROR: No matching strings found in ${rel}.` +
-      `\n  Expected to find: ${REPLACEMENTS.map((r) => r.exact).join(", ")}` +
-      `\n  The plugin may have been updated. Check the compiled output.`,
+        `\n  Expected to find: ${REPLACEMENTS.map((r) => r.exact).join(", ")}` +
+        `\n  The plugin may have been updated. Check the compiled output.`,
     )
     failed++
     continue

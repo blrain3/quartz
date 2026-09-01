@@ -3,19 +3,6 @@ declare module "*.scss" {
   export = content
 }
 
-// Type declarations for packages whose exports field doesn't include types condition
-declare module "micromorph" {
-  export default function micromorph(from: Node, to: Node): Promise<void>
-  export interface Patch {
-    type: number
-    [key: string]: any
-  }
-}
-
-declare module "remark-parse/lib" {
-  export { Root } from "mdast"
-}
-
 // dom custom event
 interface CustomEventMap {
   prenav: CustomEvent<{}>
