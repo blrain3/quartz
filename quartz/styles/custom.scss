@@ -1,3 +1,43 @@
 @use "./variables.scss" as *;
 
-// put your custom CSS here!
+// --- Font rendering ---
+// Smooth font rendering across platforms
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+// --- Chinese typography ---
+// Improve readability for CJK content
+:lang(zh) {
+  overflow-wrap: break-word;
+  line-height: 1.8;
+}
+
+// Prevent awkward orphans in headings
+h1,
+h2,
+h3 {
+  text-wrap: pretty;
+}
+
+// Improve long-form paragraph readability
+article p {
+  text-wrap: pretty;
+  hanging-punctuation: first last;
+}
+
+// --- Footer ICP filing link ---
+// The filing link must stay visible on every breakpoint (no display toggling here)
+// and remain comfortably tappable on touch devices.
+footer {
+  a {
+    display: inline-block;
+    white-space: nowrap; // keep "萌ICP备20260697号" intact on one line
+
+    @media all and ($mobile) {
+      padding: 0.35rem 0.25rem; // ~40px vertical tap target
+    }
+  }
+}

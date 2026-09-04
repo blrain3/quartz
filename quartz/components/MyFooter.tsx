@@ -3,17 +3,16 @@ import type { QuartzComponent, QuartzComponentConstructor } from "./types"
 export default (() => {
   const MyFooter: QuartzComponent = () => {
     return (
-      <footer></footer>
+      <footer>
+        <p>
+          <a href="https://icp.gov.moe/?keyword=20260697" target="_blank" rel="noopener noreferrer">
+            萌ICP备20260697号
+          </a>
+        </p>
+      </footer>
     )
   }
 
-  MyFooter.css = `
-    footer {
-      text-align: center;
-      margin-bottom: 4rem;
-      opacity: 0.7;
-    }
-  `
-
+  MyFooter.displayName = "MyFooter"
   return MyFooter
 }) satisfies QuartzComponentConstructor
