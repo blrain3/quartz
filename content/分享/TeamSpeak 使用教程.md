@@ -141,16 +141,16 @@ TS3 官方客户端**不包含中文**。需要额外安装 [汉化包](https://
 # 下载服务端（以 TS3 为例，替换为最新版本号）
 wget https://files.teamspeak-services.com/releases/server/3.13.7/teamspeak3-server_linux-amd64-3.13.7.tar.bz2
 
-# 解压
+## 解压
 tar -xjf teamspeak3-server_linux-amd64-*.tar.bz2
 
-# 进入目录
+## 进入目录
 cd teamspeak3-server_linux-amd64
 
-# 同意许可协议
+## 同意许可协议
 touch .ts3server_license_accepted
 
-# 启动服务端
+## 启动服务端
 ./ts3server_minimal_runscript.sh
 ```
 
@@ -179,14 +179,14 @@ TeamSpeak 服务端默认使用以下端口，需要在防火墙中放行：
 让 TeamSpeak 在后台持续运行：
 
 ```bash
-# 创建用户
+## 创建用户
 sudo useradd -m -s /bin/bash teamspeak
 
-# 将服务端文件移动到用户目录
+## 将服务端文件移动到用户目录
 sudo mv ~/teamspeak3-server_linux-amd64 /home/teamspeak/
 sudo chown -R teamspeak:teamspeak /home/teamspeak/teamspeak3-server_linux-amd64
 
-# 创建 systemd 服务
+## 创建 systemd 服务
 sudo tee /etc/systemd/system/teamspeak.service << 'EOF'
 [Unit]
 Description=TeamSpeak 3 Server
@@ -203,7 +203,7 @@ Restart=on-failure
 WantedBy=multi-user.target
 EOF
 
-# 启用并启动服务
+## 启用并启动服务
 sudo systemctl enable teamspeak
 sudo systemctl start teamspeak
 ```

@@ -11,5 +11,11 @@ replit.nix
 .quartz/
 quartz/cli/tui/dist/
 .claudian
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
 .workbuddy
 .turbo/
