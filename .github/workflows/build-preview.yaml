@@ -45,7 +45,7 @@ jobs:
         run: npm run check
 
       - name: Build Quartz
-        run: npx quartz build -d docs -v
+        run: npx quartz build -d content -v
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v7

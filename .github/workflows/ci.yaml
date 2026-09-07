@@ -56,7 +56,7 @@ jobs:
         run: npm test
 
       - name: Ensure Quartz builds, check bundle info
-        run: npx quartz build --bundleInfo -d docs
+        run: npx quartz build --bundleInfo -d content
 
   publish-tag:
     if: ${{ github.repository == 'jackyzha0/quartz' && github.ref == 'refs/heads/v5' }}

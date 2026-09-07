@@ -22,7 +22,3 @@ Thumbs.db
 # Docker itself
 Dockerfile
 .dockerignore
-
-# Docs / maintenance files (not needed at runtime)
-docs/
-MAINTENANCE-PLAN.md
