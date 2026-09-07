@@ -6,7 +6,8 @@ tags:
   - 组网
   - 教程
 ---
-运行以下命令：`curl -fsSL https://tailscale.com/install.sh | sh`
+在终端运行以下命令：
+`curl -fsSL https://tailscale.com/install.sh | sh`
 <img src="https://tg.salix.eu.org/file/1788785775063_image.webp" alt="image.webp" width=100% />
 
 等待安装完成，跳出提示：
@@ -52,7 +53,7 @@ sudo tailscale up
 3. 在出口节点的菜单中，打开 **“编辑路由设置”** 面板，并启用 **“用作出口节点”** 。
 <img src="https://tg.salix.eu.org/file/1788786514655_image.webp" alt="image.webp" width=100% />
 
-这只是简单的一步，值得一提的是，Tailscale 有开源自托管方案 [Handscale](https://github.com/juanfont/headscale)，感兴趣的可以去了解一下，关于 Tailscale 还有许多优秀的资源可以去学习和探索：
+这只是简单的一步，值得一提的是，Tailscale 有开源自托管方案 [Handscale](https://github.com/juanfont/headscale)，关于 Tailscale 还有许多优秀的资源可以去学习和探索：
 1. [How to get started with Tailscale in under 10 minutes](https://www.youtube.com/watch?v=sPdvyR7bLqI)
 2. [官方文档](https://tailscale.com/docs/install/linux)
 3. [韩风Talk](https://www.bilibili.com/video/BV1Wh411A73b/?vd_source=a2e9dc9137cfec266b0df4dd491d8a18)
