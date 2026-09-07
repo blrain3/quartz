@@ -1,4 +1,11 @@
-
+---
+title: Linux 安装 Tailscale
+date: 2026-01-11
+tags:
+  - 分享
+  - 组网
+  - 教程
+---
 运行以下命令：`curl -fsSL https://tailscale.com/install.sh | sh`
 <img src="https://tg.salix.eu.org/file/1788785775063_image.webp" alt="image.webp" width=100% />
 
