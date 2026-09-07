@@ -36,6 +36,12 @@ footer {
     display: inline-block;
     white-space: nowrap; // keep "萌ICP备20260697号" intact on one line
 
+    // Horizontal spacing between sibling links so they don't run together
+    // on wide viewports (where the mobile padding below doesn't apply).
+    &:not(:first-child) {
+      margin-left: 0.85rem;
+    }
+
     @media all and ($mobile) {
       padding: 0.35rem 0.25rem; // ~40px vertical tap target
     }
