@@ -166,7 +166,7 @@ plugins:
       position: beforeBody
       priority: 20
   - source: "@quartz-community/tag-list"
-    enabled: false
+    enabled: true
     layout:
       position: beforeBody
       priority: 30
@@ -222,7 +222,15 @@ plugins:
     # (see quartz/plugins/loader/config-loader.ts loadQuartzLayout)
     enabled: false
   - source: "@quartz-community/recent-notes"
-    enabled: false
+    enabled: true
+    options:
+      title: 最近笔记
+      limit: 5
+      linkToMore: false
+      showTags: true
+    layout:
+      position: left
+      priority: 25
   - source: "@quartz-community/spacer"
     enabled: true
     options: {}
