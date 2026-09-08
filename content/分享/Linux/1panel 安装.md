@@ -1,5 +1,9 @@
 ---
-title:
+title: 1Panel 安装
+date: 2026-08-21
+tags:
+  - Linux
+  - 分享
 ---
 ## 环境要求
 
