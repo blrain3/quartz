@@ -89,29 +89,10 @@ plugins:
     options:
       renderEngine: katex
     order: 80
-  - source: "@quartz-community/citations"
-    enabled: false
-    order: 85
-  - source: "@quartz-community/hard-line-breaks"
-    enabled: false
-    order: 90
-  - source: "@quartz-community/ox-hugo"
-    enabled: false
-    order: 91
-  - source: "@quartz-community/roam"
-    enabled: false
-    order: 92
   - source: "@quartz-community/quartz-fonts"
     enabled: true
-  - source: "@quartz-themes/core"
-    enabled: false
-    options:
-      theme: tokyo-night
-      mode: both
   - source: "@quartz-community/remove-draft"
     enabled: true
-  - source: "@quartz-community/explicit-publish"
-    enabled: false
   - source: "@quartz-community/alias-redirects"
     enabled: true
   - source: "@quartz-community/content-index"
@@ -119,8 +100,6 @@ plugins:
     options:
       enableSiteMap: true
       enableRSS: true
-  - source: "@quartz-community/favicon"
-    enabled: false
   - source: "@quartz-community/og-image"
     enabled: true
   - source: "@quartz-community/cname"
@@ -138,11 +117,6 @@ plugins:
     layout:
       position: left
       priority: 60
-  - source: "@quartz-community/graph"
-    enabled: false
-    layout:
-      position: right
-      priority: 10
   - source: "@quartz-community/search"
     enabled: true
     layout:
@@ -182,12 +156,6 @@ plugins:
       position: left
       priority: 30
       group: toolbar
-  - source: "@quartz-community/reader-mode"
-    enabled: false
-    layout:
-      position: left
-      priority: 35
-      group: toolbar
   - source: "@quartz-community/breadcrumbs"
     enabled: true
     options:
@@ -218,10 +186,6 @@ plugins:
       priority: 10
       # 评论区只在「关于」页渲染（条件定义见 quartz/components/CommentsPolicy.ts）
       condition: about-page
-  - source: "@quartz-community/footer"
-    # disabled: footer is provided by the local MyFooter component
-    # (see quartz/plugins/loader/config-loader.ts loadQuartzLayout)
-    enabled: false
   - source: "@quartz-community/spacer"
     enabled: true
     options: {}
@@ -266,12 +230,6 @@ plugins:
     layout:
       position: body
       priority: 100
-      display: all
-  - source: "@quartz-community/stacked-pages"
-    enabled: false
-    layout:
-      position: afterBody
-      priority: 50
       display: all
 layout:
   groups:

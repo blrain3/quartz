@@ -32,6 +32,15 @@ article p {
 // The filing link must stay visible on every breakpoint (no display toggling here)
 // and remain comfortably tappable on touch devices.
 footer {
+  .footer-divider {
+    margin: 2.5rem 0 1.5rem;
+    color: var(--secondary);
+    font-family: var(--font-code);
+    font-size: 1.1rem;
+    letter-spacing: 0.35rem;
+    text-align: center;
+  }
+
   a {
     display: inline-block;
     white-space: nowrap; // keep "萌ICP备20260697号" intact on one line

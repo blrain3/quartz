@@ -4,6 +4,9 @@ export default (() => {
   const MyFooter: QuartzComponent = () => {
     return (
       <footer>
+        <div class="footer-divider" aria-hidden="true">
+          * * *
+        </div>
         <p>
           <a href="https://icp.gov.moe/?keyword=20260697" target="_blank" rel="noopener noreferrer">
             萌ICP备20260697号
