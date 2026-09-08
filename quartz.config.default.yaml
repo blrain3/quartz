@@ -215,6 +215,8 @@ plugins:
     layout:
       position: afterBody
       priority: 10
+      # 评论区只在「关于」页渲染（条件定义见 quartz/components/CommentsPolicy.ts）
+      condition: about-page
   - source: "@quartz-community/footer"
     # disabled: footer is provided by the local MyFooter component
     # (see quartz/plugins/loader/config-loader.ts loadQuartzLayout)

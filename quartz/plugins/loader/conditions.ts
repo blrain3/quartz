@@ -1,6 +1,13 @@
 import { QuartzComponentProps } from "../../components/types"
 
-export type ConditionPredicate = (props: QuartzComponentProps) => boolean
+export type ConditionPredicate = {
+  (props: QuartzComponentProps): boolean
+  /**
+   * 可选的 SPA 守卫脚本。存在时会被前置到被包裹组件的 afterDOMLoaded 中，
+   * 用于在客户端路由切换（`nav` 事件）后清理组件状态。
+   */
+  spaScript?: string
+}
 
 const builtinConditions: Record<string, ConditionPredicate> = {
   "not-index": (props) => props.fileData.slug !== "index",

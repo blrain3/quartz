@@ -26,16 +26,21 @@ import {
 import { loadComponentsFromPackage } from "./componentLoader"
 import { loadFramesFromPackage } from "./frameLoader"
 import { componentRegistry } from "../../components/registry"
-import { getCondition } from "./conditions"
+import { getCondition, registerCondition } from "./conditions"
 import Flex from "../../components/Flex"
 import MobileOnly from "../../components/MobileOnly"
 import DesktopOnly from "../../components/DesktopOnly"
 import ConditionalRender from "../../components/ConditionalRender"
+import { COMMENT_SPA_GUARD, isCommentPage } from "../../components/CommentsPolicy"
 
 const CONFIG_YAML_PATH = path.join(process.cwd(), "quartz.config.yaml")
 const DEFAULT_CONFIG_YAML_PATH = path.join(process.cwd(), "quartz.config.default.yaml")
 const LEGACY_PLUGINS_JSON_PATH = path.join(process.cwd(), "quartz.plugins.json")
 const LEGACY_DEFAULT_PLUGINS_JSON_PATH = path.join(process.cwd(), "quartz.plugins.default.json")
+
+// 站点级布局条件：评论区只在「关于」页渲染（具体 slug 见 CommentsPolicy）。
+// 附带 SPA 守卫脚本，避免客户端路由切换时 Giscus 重复挂载或残留。
+registerCondition("about-page", Object.assign(isCommentPage, { spaScript: COMMENT_SPA_GUARD }))
 
 function resolveConfigPath(): string {
   if (fs.existsSync(CONFIG_YAML_PATH)) return CONFIG_YAML_PATH
@@ -975,8 +980,18 @@ function applyConditionWrapper(component: QuartzComponent, conditionName: string
     return component
   }
 
-  return ConditionalRender({
+  const wrapped = ConditionalRender({
     component,
     condition: predicate,
   }) as QuartzComponent
+
+  // 条件可以携带 SPA 守卫脚本，前置到组件自身的 afterDOMLoaded 之前，
+  // 保证同一轮 nav 事件中「先清理、后挂载」的顺序。
+  if (predicate.spaScript) {
+    wrapped.afterDOMLoaded = [predicate.spaScript, component.afterDOMLoaded]
+      .filter((script): script is string => typeof script === "string")
+      .join("\n")
+  }
+
+  return wrapped
 }
