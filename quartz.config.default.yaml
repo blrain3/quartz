@@ -124,7 +124,7 @@ plugins:
       priority: 20
       group: toolbar
       groupOptions:
-        grow: true
+        grow: false
   - source: "@quartz-community/backlinks"
     enabled: true
     layout:

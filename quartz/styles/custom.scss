@@ -56,3 +56,24 @@ footer {
     }
   }
 }
+
+// Keep search compact in the toolbar; clicking the icon still opens the full search dialog.
+.search {
+  width: 2rem;
+  min-width: 2rem;
+  max-width: 2rem;
+}
+
+.search > .search-button {
+  width: 2rem;
+  padding: 0;
+  justify-content: center;
+}
+
+.search > .search-button > p {
+  display: none;
+}
+
+.search > .search-button svg {
+  margin: 0;
+}
