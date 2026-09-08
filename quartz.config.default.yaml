@@ -223,7 +223,7 @@ plugins:
     # (see quartz/plugins/loader/config-loader.ts loadQuartzLayout)
     enabled: false
   - source: "@quartz-community/recent-notes"
-    enabled: true
+    enabled: false
     options:
       title: 最近笔记
       limit: 5
