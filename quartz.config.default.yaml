@@ -5,14 +5,14 @@ configuration:
   enableSPA: true
   enablePopovers: true
   analytics:
-    provider: plausible
+    provider: goatcounter
+    analyticsId: blrain.goatcounter.com
   locale: zh-CN
-  baseUrl: salix.eu.org
+  baseUrl: blrain.codes
   ignorePatterns:
     - private
     - templates
     - .obsidian
-    - .claudian
   theme:
     fontOrigin: googleFonts
     cdnCaching: true
