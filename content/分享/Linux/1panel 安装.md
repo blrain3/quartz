@@ -58,3 +58,6 @@ PANEL_CONFIGURE_ACCELERATOR=n \
 PANEL_REPLACE_DAEMON_JSON=n \ 
 bash -c "$(curl -sSL https://resource.fit2cloud.com/1panel/package/v2/quick_start.sh)"
 ```
+
+宝塔面板同理
+<img src="https://tg.salix.eu.org/file/1788828457154_image.webp" alt="image.webp" width=100% />
