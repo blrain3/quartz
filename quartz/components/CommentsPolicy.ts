@@ -9,7 +9,10 @@ function normalizeSlug(slug: unknown): string {
   } catch {
     // 非法百分号编码（例如路径里本来就有 %）时退回原始值
   }
-  return decoded.trim().replace(/^\/+|\/+$/g, "").toLowerCase()
+  return decoded
+    .trim()
+    .replace(/^\/+|\/+$/g, "")
+    .toLowerCase()
 }
 
 const allowedSlugs = new Set(COMMENT_PAGE_SLUGS.map(normalizeSlug))
