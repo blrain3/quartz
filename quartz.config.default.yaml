@@ -6,7 +6,8 @@ configuration:
   enablePopovers: true
   analytics:
     provider: goatcounter
-    analyticsId: blrain.goatcounter.com
+    websiteId: blrain
+    host: goatcounter.com
   locale: zh-CN
   baseUrl: blrain.codes
   ignorePatterns:
@@ -195,7 +196,22 @@ plugins:
       priority: 5
       condition: not-index
   - source: "@quartz-community/comments"
-    enabled: false
+    enabled: true
+    options:
+      provider: giscus
+      options:
+        repo: blrain3/guestbook
+        repoId: R_kgDOTe5aZg
+        category: Announcements
+        categoryId: DIC_kwDOTe5aZs4DBo-J
+        mapping: pathname
+        strict: false
+        reactionsEnabled: true
+        inputPosition: bottom
+        themeUrl: https://giscus.app/themes
+        lightTheme: noborder_light
+        darkTheme: noborder_light
+        lang: zh-CN
     layout:
       position: afterBody
       priority: 10

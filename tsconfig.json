@@ -4,7 +4,11 @@
     "experimentalDecorators": true,
     "module": "esnext",
     "target": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "paths": {
+      "micromorph": ["./node_modules/micromorph/index.d.ts"],
+      "remark-parse/lib": ["./node_modules/remark-parse/lib/index.d.ts"]
+    },
     "strict": true,
     "incremental": true,
     "resolveJsonModule": true,
