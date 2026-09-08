@@ -1,5 +1,6 @@
 ---
 title: Termux
+related: "[[Linux 文件系统]] [[Linux 安装 Tailscale]]"
 date: 2025-08-12
 tags:
   - 计算机
