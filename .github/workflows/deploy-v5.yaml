@@ -1,4 +1,4 @@
-name: Deploy v5 Preview
+name: Deploy v5 to Cloudflare Workers
 
 on:
   push:
@@ -8,13 +8,11 @@ on:
 
 permissions:
   contents: read
-  deployments: write
 
 jobs:
   deploy-v5:
-    if: ${{ github.repository == 'jackyzha0/quartz' }}
     runs-on: ubuntu-latest
-    name: Deploy v5 to Cloudflare Pages
+    name: Deploy v5 to Cloudflare Workers
     steps:
       - uses: actions/checkout@v7
         with:
@@ -43,22 +41,17 @@ jobs:
 
       - run: npm install
 
-      - name: Install Quartz plugins
-        run: npx quartz plugin install
-
       - name: Check types and style
         run: npm run check
 
+      # same as local `npm run build`:
+      # prebuild (install-plugins + patch) -> build -> postbuild (patch-graph-output)
       - name: Build Quartz
-        run: npx quartz build -d content -v
+        run: npm run build
 
-      - name: Deploy to Cloudflare Pages
-        uses: AdrianGonz97/refined-cf-pages-action@v1
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          projectName: quartz
-          deploymentName: v5 Branch Preview
-          branch: v5
-          directory: public
+          command: deploy
