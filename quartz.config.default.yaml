@@ -24,25 +24,25 @@ configuration:
       code: IBM Plex Mono
     colors:
       lightMode:
-        light: "#ffffff"
-        lightgray: "#f2f2f2"
-        gray: "#808080"
-        darkgray: "#4d4d4d"
-        dark: "#000000"
-        secondary: "#666666"
-        tertiary: "#333333"
-        highlight: rgba(0, 0, 0, 0.08)
-        textHighlight: "#ffff8a80"
+        light: "#f5f1e8"
+        lightgray: "#e6e0d4"
+        gray: "#b0a89c"
+        darkgray: "#3d4f5f"
+        dark: "#1a2b3c"
+        secondary: "#2c4a6e"
+        tertiary: "#5a7a9a"
+        highlight: rgba(44, 74, 110, 0.08)
+        textHighlight: "#f0d5a8"
       darkMode:
-        light: "#1a1a1a"
-        lightgray: "#2e2e2e"
-        gray: "#808080"
-        darkgray: "#bfbfbf"
-        dark: "#ffffff"
-        secondary: "#999999"
-        tertiary: "#cccccc"
-        highlight: rgba(255, 255, 255, 0.08)
-        textHighlight: "#ffd70088"
+        light: "#202a35"
+        lightgray: "#2d3946"
+        gray: "#718096"
+        darkgray: "#c3ccd6"
+        dark: "#edf2f7"
+        secondary: "#9db9d6"
+        tertiary: "#7897b6"
+        highlight: rgba(157, 185, 214, 0.12)
+        textHighlight: "#d6b77c"
 plugins:
   - source: "@quartz-community/created-modified-date"
     enabled: true
@@ -137,9 +137,9 @@ plugins:
     enabled: true
     layout:
       position: left
-      priority: 50
+      priority: 60
   - source: "@quartz-community/graph"
-    enabled: true
+    enabled: false
     layout:
       position: right
       priority: 10
