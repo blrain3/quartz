@@ -1,5 +1,8 @@
 ---
-title: BLOOMING RAINDROPS
+title: BLOOMING RAINDROP
+tags:
+  - 首页
+related: 关于
 ---
 ### 欢迎！
 
