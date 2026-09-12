@@ -110,5 +110,10 @@ PageList.css = `
 
 .section > .tags {
   margin: 0;
+  align-items: flex-start;
+}
+
+.section > .tags > li > a.tag-link {
+  display: inline-block;
 }
 `

@@ -91,6 +91,7 @@
     "@quartz-community/tag-page": "^0.1.0",
     "@quartz-community/unlisted-pages": "^0.1.0",
     "@quartz-themes/core": "^1.0.0",
+    "@quartz-themes/minimal": "^1.0.1",
     "ansi-truncate": "^1.4.0",
     "async-mutex": "^0.5.0",
     "chokidar": "^5.0.0",

@@ -57,8 +57,8 @@ plugins:
     enabled: true
     options:
       theme:
-        light: github-light
-        dark: github-dark
+        light: min-light
+        dark: min-dark
       keepBackground: false
     order: 20
   - source: "@quartz-community/obsidian-flavored-markdown"
@@ -91,6 +91,11 @@ plugins:
     order: 80
   - source: "@quartz-community/quartz-fonts"
     enabled: true
+  - source: "@quartz-themes/core"
+    enabled: true
+    options:
+      theme: minimal
+      mode: both
   - source: "@quartz-community/remove-draft"
     enabled: true
   - source: "@quartz-community/alias-redirects"
