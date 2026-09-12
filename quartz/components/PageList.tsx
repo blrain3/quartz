@@ -116,4 +116,8 @@ PageList.css = `
 .section > .tags > li > a.tag-link {
   display: inline-block;
 }
+
+.section > .tags > li {
+  border: none;
+}
 `
