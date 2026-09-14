@@ -22,7 +22,7 @@
     "patch": "node scripts/patch-graph.mjs && node scripts/patch-search.mjs",
     "prebuild": "npm run install-plugins && npm run patch",
     "build": "npx quartz build",
-    "postbuild": "node scripts/patch-graph-output.mjs",
+    "postbuild": "node scripts/patch-graph-output.mjs && node scripts/copy-headers.mjs",
     "deploy": "wrangler deploy",
     "preview": "wrangler dev",
     "fetch-fonts": "node scripts/fetch-fonts.mjs"

@@ -146,10 +146,7 @@ plugins:
       position: beforeBody
       priority: 20
   - source: "@quartz-community/tag-list"
-    enabled: true
-    layout:
-      position: beforeBody
-      priority: 30
+    enabled: false
   - source: "@quartz-community/page-title"
     enabled: true
     layout:
@@ -209,7 +206,6 @@ plugins:
       includeAll: false
       includedProperties:
         - description
-        - tags
         - aliases
       excludedProperties: []
       hidePropertiesView: false

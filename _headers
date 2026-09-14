@@ -1,0 +1,28 @@
+# Cloudflare Workers 静态资源自定义响应头
+# 由 scripts/copy-headers.mjs 复制到 public/_headers（postbuild 阶段）
+#
+# 背景：Workers 静态资源默认对所有文件返回
+#   Cache-Control: public, max-age=0, must-revalidate
+# 也就是每次访问都要带 ETag 回源校验。字体和带内容哈希的 CSS/JS
+# 内容永不改变，应该让浏览器和 CF 边缘长期缓存，省掉这些校验请求。
+
+# 字体分片：内容不变，永久缓存
+/static/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# 根目录的 CSS / JS 都是 build 时内容哈希命名（如 index-7ff45a22.css），
+# 内容一变文件名就变，可以放心 immutable
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+# 组件级的哈希资源
+/static/resource-*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/static/resource-style-*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML 不加规则，沿用默认的 must-revalidate（内容会随文章更新而变化）
