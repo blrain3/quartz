@@ -24,7 +24,8 @@
     "build": "npx quartz build",
     "postbuild": "node scripts/patch-graph-output.mjs",
     "deploy": "wrangler deploy",
-    "preview": "wrangler dev"
+    "preview": "wrangler dev",
+    "fetch-fonts": "node scripts/fetch-fonts.mjs"
   },
   "engines": {
     "npm": ">=10.9.2",

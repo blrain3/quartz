@@ -1,4 +1,6 @@
 @use "./variables.scss" as *;
+// 自托管字体（由 scripts/fetch-fonts.mjs 生成）
+@use "fonts";
 
 // --- Font rendering ---
 // Smooth font rendering across platforms

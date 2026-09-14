@@ -16,8 +16,8 @@ configuration:
     - templates
     - .obsidian
   theme:
-    fontOrigin: googleFonts
-    cdnCaching: true
+    fontOrigin: local
+    cdnCaching: false
     typography:
       header: Schibsted Grotesk
       body: Noto Sans SC
@@ -90,7 +90,7 @@ plugins:
       renderEngine: katex
     order: 80
   - source: "@quartz-community/quartz-fonts"
-    enabled: true
+    enabled: false
   - source: "@quartz-themes/core"
     enabled: true
     options:
