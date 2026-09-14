@@ -1,14 +1,13 @@
 ---
 title: Termux
-related: "[[Linux 文件系统]] [[Linux 安装 Tailscale]]"
 date: 2025-08-12
+related: "[[Linux 文件系统]] [[Linux 安装 Tailscale]]"
 tags:
-  - 计算机
-  - 开发工具
+  - 技术
+  - Linux
   - Termux
   - Android
 ---
-
 **Termux**是无需 Root 的 Android 终端模拟器与 Linux 环境，提供完整命令行体验，支持包管理、编程与脚本运行。核心价值是把手机变成便携 Linux 电脑。
 
 > [!note] 官方参考

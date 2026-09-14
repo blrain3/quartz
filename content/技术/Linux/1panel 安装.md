@@ -2,8 +2,9 @@
 title: 1Panel 安装
 date: 2026-08-21
 tags:
+  - 技术
   - Linux
-  - 分享
+  - 工具
 ---
 ## 环境要求
 

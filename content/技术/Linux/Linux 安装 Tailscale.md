@@ -2,9 +2,9 @@
 title: Linux 安装 Tailscale
 date: 2026-01-11
 tags:
-  - 分享
+  - 技术
+  - Linux
   - 组网
-  - 教程
 ---
 ## 安装
 
