@@ -4,3 +4,6 @@ node_modules
 content
 .codex
 .claude
+
+# 由 scripts/fetch-fonts.mjs 生成的机器文件，不做格式检查
+quartz/styles/_fonts.scss
