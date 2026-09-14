@@ -19,7 +19,7 @@
     "test": "tsx --test",
     "profile": "0x -D prof ./quartz/bootstrap-cli.mjs build --concurrency=1",
     "install-plugins": "npx tsx ./quartz/plugins/loader/install-plugins.ts",
-    "patch": "node scripts/patch-graph.mjs && node scripts/patch-search.mjs",
+    "patch": "node scripts/patch-graph.mjs && node scripts/patch-search.mjs && node scripts/patch-folder-tags.mjs",
     "prebuild": "npm run install-plugins && npm run patch",
     "build": "npx quartz build",
     "postbuild": "node scripts/patch-graph-output.mjs && node scripts/copy-headers.mjs",
