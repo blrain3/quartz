@@ -13,6 +13,8 @@ tags:
 
 PCL2 是龙腾猫跃维护的开源启动器，官网首页长这样：
 
+[PCL2 官网](https://pcl2.aoe.top/)
+
 ![PCL2 官网首页](https://tg.salix.eu.org/file/1789464236879_image.webp)
 
 绿色免安装，解压即用。不需要注册表，不需要管理员权限，U 盘里放一份就能在任何 Windows 机器上跑起来。
