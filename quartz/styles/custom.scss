@@ -10,6 +10,14 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+// --- Minimal folder pages ---
+// Keep frontmatter tags for search/metadata, but do not render them in folder lists.
+// The folder-page plugin emits an empty <ul class="tags"> after our build patch;
+// hiding the shell keeps the third grid column and tag affordance out of the UI.
+li.section-li > .section > .tags {
+  display: none;
+}
+
 // --- Chinese typography ---
 // Improve readability for CJK content
 :lang(zh) {
