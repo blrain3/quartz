@@ -30,17 +30,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Quartz plugins
-        run: npx quartz plugin install
-
-      - name: Patch graph plugin for Chinese URL support
-        run: node scripts/patch-graph.mjs
-
+      # Keep the Pages build on the same lifecycle as the Cloudflare build:
+      # prebuild installs plugins and applies all patches; postbuild copies
+      # headers and applies output patches.
       - name: Build Quartz
-        run: npx quartz build
-
-      - name: Patch postscript for Chinese URL support
-        run: node scripts/patch-graph-output.mjs
+        run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
