@@ -154,27 +154,31 @@ window.spaNavigate = navigate
 
 function createRouter() {
   if (typeof window !== "undefined") {
-    window.addEventListener("click", async (event) => {
+    const onClick = async (event: MouseEvent) => {
       const { url } = getOpts(event) ?? {}
-      // dont hijack behaviour, just let browser act normally
       if (!url || event.ctrlKey || event.metaKey) return
       event.preventDefault()
-
       if (isSamePage(url) && url.hash) {
         const el = document.getElementById(decodeURIComponent(url.hash.substring(1)))
         el?.scrollIntoView()
         history.pushState({}, "", url)
         return
       }
-
       navigate(url, false)
-    })
+    }
 
-    window.addEventListener("popstate", (event) => {
+    const onPopState = () => {
       const { url } = getOpts(event) ?? {}
       if (window.location.hash && window.location.pathname === url?.pathname) return
       navigate(new URL(window.location.toString()), true)
-      return
+    }
+
+    window.addEventListener("click", onClick)
+    window.addEventListener("popstate", onPopState)
+
+    addCleanup(() => {
+      window.removeEventListener("click", onClick)
+      window.removeEventListener("popstate", onPopState)
     })
   }
 
