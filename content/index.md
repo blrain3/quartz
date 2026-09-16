@@ -1,5 +1,6 @@
 ---
 title: BLOOMING RAINDROP
+date: 2026-01-01
 tags:
   - 首页
 related: 关于
@@ -25,4 +26,4 @@ related: 关于
 除此之外，你也可以通过[开往](https://www.travellings.cn/go.html)和[异次元之旅](https://travel.moe/go?travel=on)前往其他有趣的网站。
 ### 从这里开始
 
-文件夹：[[影评]]、[[技术]]、[[随笔]]、[[读书]]、[[诗歌]]。
+文件夹：影评、技术、随笔、读书、诗歌。
