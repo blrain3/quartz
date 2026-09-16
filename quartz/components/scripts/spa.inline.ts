@@ -168,18 +168,11 @@ function createRouter() {
     }
 
     const onPopState = () => {
-      const { url } = getOpts(event) ?? {}
-      if (window.location.hash && window.location.pathname === url?.pathname) return
       navigate(new URL(window.location.toString()), true)
     }
 
     window.addEventListener("click", onClick)
     window.addEventListener("popstate", onPopState)
-
-    addCleanup(() => {
-      window.removeEventListener("click", onClick)
-      window.removeEventListener("popstate", onPopState)
-    })
   }
 
   return new (class Router {
