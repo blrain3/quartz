@@ -43,7 +43,7 @@
     "quartz": "./quartz/bootstrap-cli.mjs"
   },
   "dependencies": {
-    "@clack/prompts": "^1.7.0",
+    "@clack/prompts": "^1.8.0",
     "@floating-ui/dom": "^1.7.4",
     "@myriaddreamin/rehype-typst": "^0.7.0",
     "@napi-rs/simple-git": "1.1.0",
@@ -101,7 +101,7 @@
     "globby": "^16.2.4",
     "hast-util-from-html": "^2.0.0",
     "hast-util-to-jsx-runtime": "^2.3.6",
-    "isomorphic-git": "^1.41.9",
+    "isomorphic-git": "^1.42.1",
     "lightningcss": "^1.31.1",
     "micromorph": "^0.4.5",
     "minimatch": "^10.2.6",
@@ -128,7 +128,7 @@
     "@quartz-community/types": "^0.3.0",
     "@quartz-community/utils": "^0.1.0",
     "@types/hast": "^3.0.4",
-    "@types/node": "^26.4.1",
+    "@types/node": "^26.5.1",
     "@types/pretty-time": "^1.1.5",
     "@types/source-map-support": "^0.5.10",
     "@types/ws": "^8.18.1",
@@ -137,6 +137,6 @@
     "prettier": "^3.8.1",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2",
-    "wrangler": "^4.129.1"
+    "wrangler": "^4.131.0"
   }
 }
