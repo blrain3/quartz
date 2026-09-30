@@ -14,7 +14,7 @@ tags:
 
 只需将以下 JavaScript 代码添加到页面上的任意位置即可：
 ```
-<script data-goatcounter="https://MYCODE.goatcounter.com/count"        
+<script data-goatcounter="https://MYCODE.goatcounter.com/count"
 async src="//gc.zgo.at/count.js">
 </script>
 ```

@@ -49,18 +49,18 @@ bash -c "$(curl -sSL https://resource.fit2cloud.com/1panel/package/v2/quick_star
 如需在批量部署、云服务器初始化脚本、CI/CD 等自动化场景中安装 1Panel，可以通过环境变量提前配置安装参数，并启用非交互模式。
 
 ```
-# 如需由安装脚本自动安装 Docker，请显式开启 
-PANEL_NON_INTERACTIVE=true \ 
-PANEL_LANG=zh \ 
-PANEL_INSTALL_DIR=/opt \ 
+# 如需由安装脚本自动安装 Docker，请显式开启
+PANEL_NON_INTERACTIVE=true \
+PANEL_LANG=zh \
+PANEL_INSTALL_DIR=/opt \
 PANEL_PORT=18080 \
 PANEL_ENTRANCE=panelEntrance \
-PANEL_USERNAME=panelAdmin \ 
-PANEL_PASSWORD='ChangeMe_123456' \ 
-PANEL_INSTALL_DOCKER=y \ 
-PANEL_DOCKER_MODE=auto \ 
-PANEL_CONFIGURE_ACCELERATOR=n \ 
-PANEL_REPLACE_DAEMON_JSON=n \ 
+PANEL_USERNAME=panelAdmin \
+PANEL_PASSWORD='ChangeMe_123456' \
+PANEL_INSTALL_DOCKER=y \
+PANEL_DOCKER_MODE=auto \
+PANEL_CONFIGURE_ACCELERATOR=n \
+PANEL_REPLACE_DAEMON_JSON=n \
 bash -c "$(curl -sSL https://resource.fit2cloud.com/1panel/package/v2/quick_start.sh)"
 ```
 
