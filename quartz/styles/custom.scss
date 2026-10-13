@@ -57,3 +57,11 @@ footer {
     }
   }
 }
+
+// Keep the visually closed Explorer from intercepting controls while its
+// visibility transition finishes; the open panel retains normal hit testing.
+@media all and ($mobile) {
+  .explorer.nav-files-container.collapsed > .explorer-content {
+    pointer-events: none;
+  }
+}
