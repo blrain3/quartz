@@ -18,6 +18,8 @@
 import { readFileSync, writeFileSync, existsSync } from "fs"
 import { resolve } from "path"
 
+const PLUGIN_PKG = "@quartz-community/folder-page"
+
 const TARGET = resolve(
   import.meta.dirname,
   "..",
@@ -31,10 +33,16 @@ const TARGET = resolve(
 const OLD = "const tags = page.frontmatter?.tags ?? [];"
 const NEW = "const tags = [];"
 
-if (!existsSync(TARGET)) {
-  console.log("[patch-folder-tags] folder-page 未安装，跳过。")
-  process.exit(0)
-}
+const packagePath = resolve(import.meta.dirname, "..", "node_modules", PLUGIN_PKG, "package.json")
+if (!existsSync(packagePath))
+  throw new Error(`[patch-folder-tags] Required plugin is missing: ${PLUGIN_PKG}`)
+const version = JSON.parse(readFileSync(packagePath, "utf-8")).version
+if (Number(version.split(".")[0]) !== 1)
+  throw new Error(
+    `[patch-folder-tags] Unsupported ${PLUGIN_PKG} version ${version}; expected major 1`,
+  )
+if (!existsSync(TARGET))
+  throw new Error(`[patch-folder-tags] Required target is missing: ${TARGET}`)
 
 const src = readFileSync(TARGET, "utf-8")
 
@@ -42,12 +50,10 @@ if (!src.includes(OLD)) {
   if (src.includes(NEW)) {
     console.log("[patch-folder-tags] 已打过补丁，跳过。")
   } else {
-    console.warn(
-      "[patch-folder-tags] ⚠️ 未找到目标代码 —— folder-page 可能已更新。\n" +
-        "  文件夹页会重新出现指向 /tags/* 的死链（tag-page 已禁用）。\n" +
-        "  请检查 node_modules/@quartz-community/folder-page/dist/index.js " +
-        "里 tags 的渲染逻辑并更新本脚本。",
+    console.error(
+      "[patch-folder-tags] ERROR: expected tag source or patched source was not found in folder-page dist/index.js",
     )
+    process.exit(1)
   }
   process.exit(0)
 }

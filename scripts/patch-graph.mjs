@@ -19,7 +19,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = resolve(__dirname, "..")
 
 const PLUGIN_PKG = "@quartz-community/graph"
-const EXPECTED_VERSION = "0.1.0"
+const EXPECTED_MAJOR = 1
 
 const targets = [
   "node_modules/@quartz-community/graph/dist/index.js",
@@ -43,14 +43,10 @@ function checkVersion() {
     return
   }
   const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"))
-  if (pkg.version !== EXPECTED_VERSION) {
-    console.warn(
-      `[patch-graph] Warning: graph plugin version mismatch.` +
-        `\n  Expected: ${EXPECTED_VERSION}` +
-        `\n  Actual:   ${pkg.version}` +
-        `\n  The minified function name may have changed. Verify patch compatibility.`,
+  if (Number(pkg.version.split(".")[0]) !== EXPECTED_MAJOR)
+    throw new Error(
+      `[patch-graph] Unsupported ${PLUGIN_PKG} version ${pkg.version}; expected major ${EXPECTED_MAJOR}`,
     )
-  }
 }
 
 let patched = 0
@@ -67,6 +63,13 @@ for (const rel of targets) {
     continue
   }
   let src = readFileSync(abs, "utf-8")
+  if (
+    /function\s+\w+\(\)\s*\{\s*let\s+\w+\s*=\s*decodeURI\(window\.location\.pathname\)/.test(src)
+  ) {
+    console.log(`[patch-graph] Upstream already decodes the pathname: ${rel}`)
+    patched++
+    continue
+  }
   if (src.includes(NEW)) {
     console.log(`[patch-graph] Already patched: ${rel}`)
     patched++

@@ -16,7 +16,7 @@ import { resolve } from "path"
 const root = resolve(import.meta.dirname, "..")
 
 const PLUGIN_PKG = "@quartz-community/search"
-const EXPECTED_VERSION = "0.1.0"
+const EXPECTED_MAJOR = 1
 
 const targets = [
   "node_modules/@quartz-community/search/dist/components/index.js",
@@ -35,19 +35,13 @@ const REPLACEMENTS = [
 
 function checkVersion() {
   const pkgPath = resolve(root, "node_modules", PLUGIN_PKG, "package.json")
-  if (!existsSync(pkgPath)) {
-    console.warn(`[patch-search] Warning: ${PLUGIN_PKG} not installed, skipping version check`)
-    return
-  }
+  if (!existsSync(pkgPath))
+    throw new Error(`[patch-search] Required plugin is missing: ${PLUGIN_PKG}`)
   const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"))
-  if (pkg.version !== EXPECTED_VERSION) {
-    console.warn(
-      `[patch-search] Warning: search plugin version mismatch.` +
-        `\n  Expected: ${EXPECTED_VERSION}` +
-        `\n  Actual:   ${pkg.version}` +
-        `\n  The string literals may have changed. Verify patch compatibility.`,
+  if (Number(pkg.version.split(".")[0]) !== EXPECTED_MAJOR)
+    throw new Error(
+      `[patch-search] Unsupported ${PLUGIN_PKG} version ${pkg.version}; expected major ${EXPECTED_MAJOR}`,
     )
-  }
 }
 
 let patched = 0
@@ -58,13 +52,14 @@ checkVersion()
 for (const rel of targets) {
   const abs = resolve(root, rel)
   if (!existsSync(abs)) {
-    console.log(`[patch-search] Skipping ${rel} - not found`)
+    console.error(`[patch-search] ERROR: Required target is missing: ${rel}`)
+    failed++
     continue
   }
   let src = readFileSync(abs, "utf-8")
 
   // Check if already patched
-  if (src.includes("没有结果")) {
+  if (src.includes("没有结果") && src.includes("请尝试其他搜索词。")) {
     console.log(`[patch-search] Already patched: ${rel}`)
     patched++
     continue
@@ -74,7 +69,9 @@ for (const rel of targets) {
   let changed = false
 
   for (const { exact, regex, replacement } of REPLACEMENTS) {
-    if (src.includes(exact)) {
+    if (src.includes(replacement)) {
+      continue
+    } else if (src.includes(exact)) {
       src = src.replaceAll(exact, replacement)
       changed = true
     } else {
@@ -86,7 +83,7 @@ for (const rel of targets) {
     }
   }
 
-  if (!changed) {
+  if (!changed && !(src.includes("没有结果") && src.includes("请尝试其他搜索词。"))) {
     // File exists but no patterns matched - this is a failure
     console.error(
       `[patch-search] ERROR: No matching strings found in ${rel}.` +
