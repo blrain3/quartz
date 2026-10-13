@@ -34,6 +34,8 @@ jobs:
       # prebuild installs plugins and applies all patches; postbuild copies
       # headers and applies output patches.
       - name: Build Quartz
+        env:
+          QUARTZ_BASE_PATH: /${{ github.event.repository.name }}
         run: npm run build
 
       - name: Upload artifact

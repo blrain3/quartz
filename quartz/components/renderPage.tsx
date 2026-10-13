@@ -30,6 +30,16 @@ interface RenderComponents {
 }
 
 const headerRegex = new RegExp(/h[1-6]/)
+export function getBasePath(
+  baseUrl: string | undefined,
+  serving: boolean,
+  buildBasePath = process.env.QUARTZ_BASE_PATH,
+): string {
+  if (serving) return ""
+  if (buildBasePath !== undefined) return buildBasePath.replace(/\/$/, "")
+  return baseUrl ? new URL(`https://${baseUrl}`).pathname.replace(/\/$/, "") : ""
+}
+
 export function pageResources(
   baseDir: FullSlug | RelativeURL,
   staticResources: StaticResources,
@@ -339,10 +349,7 @@ export function renderPage(
   const direction = i18n(cfg.locale).direction ?? "ltr"
   // During local dev (--serve), the dev server serves from root without the
   // baseUrl subpath, so basePath must be empty to avoid broken links.
-  const basePath =
-    componentData.ctx.argv.serve || !cfg.baseUrl
-      ? ""
-      : new URL(`https://${cfg.baseUrl}`).pathname.replace(/\/$/, "")
+  const basePath = getBasePath(cfg.baseUrl, componentData.ctx.argv.serve)
   const doc = (
     <html lang={lang} dir={direction}>
       <Head {...componentData} />

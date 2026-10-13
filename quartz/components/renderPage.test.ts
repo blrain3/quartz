@@ -1,6 +1,6 @@
 import test, { describe } from "node:test"
 import assert from "node:assert"
-import { renderTranscludes, pageResources } from "./renderPage"
+import { renderTranscludes, pageResources, getBasePath } from "./renderPage"
 import { Root, Element } from "hast"
 import { FullSlug } from "../util/path"
 import { GlobalConfiguration } from "../cfg"
@@ -40,6 +40,14 @@ function makePageData(slug: string, htmlAst: Root, extra?: Record<string, unknow
 }
 
 const cfg = { locale: "en-US" } as GlobalConfiguration
+
+describe("base path", () => {
+  test("uses the configured project subpath but leaves root and serve paths empty", () => {
+    assert.strictEqual(getBasePath("blrain.codes", false, "/quartz/"), "/quartz")
+    assert.strictEqual(getBasePath("blrain.codes", false), "")
+    assert.strictEqual(getBasePath("blrain.codes", true, "/quartz"), "")
+  })
+})
 
 function makeComponentData(
   allFiles: QuartzComponentProps["allFiles"],
