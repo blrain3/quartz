@@ -6,6 +6,7 @@ tags:
   - Agent
   - 工作流
   - 自我改进
+  - 评估
 ---
 
 我曾经把 Hermes 的一次真实失败交给 Agent，让它自己找原因、写修复、跑验证。最后合入生产的，不是一句“测试通过”，而是一串不能跳过的东西：冻结的 failure benchmark、dev/holdout、negative control、隔离 worktree、独立 evaluator，以及最后的人类批准。

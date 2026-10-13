@@ -5,6 +5,7 @@ tags:
   - 技术
   - Linux
   - 组网
+  - Tailscale
 ---
 ## 安装
 

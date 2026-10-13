@@ -5,6 +5,8 @@ tags:
   - 技术
   - 网站
   - 网站分析
+  - GoatCounter
+  - 分析统计
 ---
 > [GoatCounter](https://www.goatcounter.com/)是一个开源的网络分析平台，提供免费的捐赠支持型托管服务或自托管应用程序。它旨在提供易于使用、有意义且注重隐私的网络分析。
 

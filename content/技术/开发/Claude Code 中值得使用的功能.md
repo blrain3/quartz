@@ -5,6 +5,7 @@ tags:
   - 技术
   - 开发
   - AI
+  - Claude Code
 ---
 [CLaude Code](https://claude.com/product/claude-code) 是一款强大且质量不错的工具，我更喜欢 **「IDE + Agent」**（或者Editor + Agent）组合（有界面、能点按钮），概念可迁移到其他编程 Agent。Claude Code 的出现可谓让A\在人工智能时代杀出一条血路。
 
