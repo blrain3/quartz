@@ -7,36 +7,26 @@
 // Since the upstream v5 merge, the graph plugin comes from npm
 // (@quartz-community/graph) instead of a git clone tracked in quartz.lock.json.
 //
-// SAFETY: This pattern is specific to @quartz-community/graph@0.1.0.
-// If the plugin is updated, the minified output may change. The script will
-// log a warning but will not fail the build (postscript is a build artifact
-// and the graph plugin is currently disabled).
+// SAFETY: This targets one signature in the emitted postscript. The patch is
+// skipped when the graph plugin is disabled in the active Quartz config; when
+// enabled, a missing signature is reported without failing the build because
+// this output patch is optional.
 
 import { readFileSync, writeFileSync, readdirSync, existsSync } from "fs"
 import { resolve } from "path"
+import { parse } from "yaml"
 
 const root = resolve(import.meta.dirname, "..")
 
 const PLUGIN_PKG = "@quartz-community/graph"
-const EXPECTED_VERSION = "0.1.0"
+function graphIsEnabled() {
+  const config = parse(readFileSync(resolve(root, "quartz.config.yaml"), "utf8"))
+  return config.plugins?.some((plugin) => plugin.source === PLUGIN_PKG && plugin.enabled !== false)
+}
 
-function checkVersion() {
-  const pkgPath = resolve(root, "node_modules", PLUGIN_PKG, "package.json")
-  if (!existsSync(pkgPath)) {
-    console.warn(
-      `[patch-graph-output] Warning: ${PLUGIN_PKG} not installed, skipping version check`,
-    )
-    return
-  }
-  const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"))
-  if (pkg.version !== EXPECTED_VERSION) {
-    console.warn(
-      `[patch-graph-output] Warning: graph plugin version mismatch.` +
-        `\n  Expected: ${EXPECTED_VERSION}` +
-        `\n  Actual:   ${pkg.version}` +
-        `\n  The postscript pattern may have changed.`,
-    )
-  }
+if (!graphIsEnabled()) {
+  console.log(`[patch-graph-output] ${PLUGIN_PKG} is disabled in quartz.config.yaml; skipping.`)
+  process.exit(0)
 }
 
 // Find the hashed postscript file
@@ -64,8 +54,6 @@ if (!postscript) {
   console.log("[patch-graph-output] No postscript file found in public/. Skipping.")
   process.exit(0)
 }
-
-checkVersion()
 
 let src = readFileSync(postscript, "utf-8")
 let count = 0

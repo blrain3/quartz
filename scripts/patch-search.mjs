@@ -83,10 +83,11 @@ for (const rel of targets) {
     }
   }
 
-  if (!changed && !(src.includes("没有结果") && src.includes("请尝试其他搜索词。"))) {
+  const hasAllTranslations = REPLACEMENTS.every(({ replacement }) => src.includes(replacement))
+  if (!hasAllTranslations) {
     // File exists but no patterns matched - this is a failure
     console.error(
-      `[patch-search] ERROR: No matching strings found in ${rel}.` +
+      `[patch-search] ERROR: Required translations are incomplete in ${rel}.` +
         `\n  Expected to find: ${REPLACEMENTS.map((r) => r.exact).join(", ")}` +
         `\n  The plugin may have been updated. Check the compiled output.`,
     )
@@ -94,8 +95,12 @@ for (const rel of targets) {
     continue
   }
 
-  writeFileSync(abs, src, "utf-8")
-  console.log(`[patch-search] Patched ${rel}`)
+  if (changed) {
+    writeFileSync(abs, src, "utf-8")
+    console.log(`[patch-search] Patched ${rel}`)
+  } else {
+    console.log(`[patch-search] Already patched: ${rel}`)
+  }
   patched++
 }
 

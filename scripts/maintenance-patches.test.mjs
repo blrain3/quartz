@@ -51,6 +51,26 @@ test("search patch changes both Chinese strings, reruns cleanly, and rejects mis
   }
 })
 
+test("search patch rejects a partial translation without writing it", () => {
+  const partial = '"No results." 已翻译但缺少第二句'
+  const root = fixture("patch-search.mjs", {
+    "@quartz-community/search/package.json": JSON.stringify({ version: "1.0.0" }),
+    "@quartz-community/search/dist/index.js": partial,
+    "@quartz-community/search/dist/components/index.js": partial,
+  })
+  try {
+    assert.notEqual(run(root, "patch-search.mjs").status, 0)
+    for (const file of ["dist/index.js", "dist/components/index.js"]) {
+      assert.equal(
+        readFileSync(resolve(root, "node_modules/@quartz-community/search", file), "utf8"),
+        partial,
+      )
+    }
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
 test("folder-page removes tags, reruns cleanly, and rejects mismatched source", () => {
   const root = fixture("patch-folder-tags.mjs", {
     "@quartz-community/folder-page/package.json": JSON.stringify({ version: "1.0.0" }),

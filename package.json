@@ -1,6 +1,6 @@
 {
   "name": "@jackyzha0/quartz",
-  "description": "\ud83c\udf31 publish your digital garden and notes as a website",
+  "description": "🌱 publish your digital garden and notes as a website",
   "private": true,
   "version": "5.0.0",
   "type": "module",
@@ -14,7 +14,7 @@
   "scripts": {
     "quartz": "./quartz/bootstrap-cli.mjs",
     "docs": "npx quartz build --serve -d content",
-    "check": "tsc --noEmit && npx prettier . --check --ignore-path scripts/.maintenance-evidence/.prettierignore",
+    "check": "tsc --noEmit && npx prettier . --check",
     "format": "npx prettier . --write",
     "test": "tsx --test",
     "profile": "0x -D prof ./quartz/bootstrap-cli.mjs build --concurrency=1",
