@@ -1,5 +1,5 @@
 ---
-title: Claude Code 中值得使用的功能
+title: "给 Claude Code 的功能打个分"
 date: 2025-12-05
 tags:
   - 技术
@@ -7,33 +7,27 @@ tags:
   - AI
   - Claude Code
 ---
-[CLaude Code](https://claude.com/product/claude-code) 是一款强大且质量不错的工具，我更喜欢 **「IDE + Agent」**（或者Editor + Agent）组合（有界面、能点按钮），概念可迁移到其他编程 Agent。Claude Code 的出现可谓让A\在人工智能时代杀出一条血路。
 
-Claude Code中有一些实用的功能，我就使用情况对其进行锐评。
 
-| 功能                    | 评级            | 要点                                                                                                                                                                                                                                                                                             |
-| --------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/init` + `CLAUDE.md` | C/D（文件本身可升）   | 首次进项目分析代码库写入记忆文件；可 import 其他 md。内容建议写：项目简介、现状、编码风格、PR 语言、避免全大写等。不是刚需，Skills 往往更管用。                                                                                                                                                                                                             |
-| Skills（`skill.md`）    | A→S（用得好）      | 可复用工作流指南。推荐使用TS大师 [Matt Pocock](https://github.com/mattpocock) 的 **[graph-docs-cli](https://github.com/mattpocock/graph-docs-cli)**改进架构；Cursor 的 [Thermonuclear code quality](https://github.com/cursor/plugins/blob/main/cursor-team-kit/skills/thermo-nuclear-code-quality-review/SKILL.md)。 |
-| Plan Mode（Shift+Tab）  | 必备            | 先读代码、写完整计划再动手，方便审计划。适合大任务，小改动别用。                                                                                                                                                                                                                                                               |
-| 验证（Verification）      | S / 三 S       | 工程基本功。先写测试再实现；别测每一行；用类型检查/linter；前端用截图/浏览器测试。让模型有办法自证「做完了」。                                                                                                                                                                                                                                    |
-| MCP                   | A             | 只在需要与代码库外系统交互时用（GitHub、DB、浏览器等）。别把最佳实践塞进 MCP，那是 Skill 的事。少装、只装必要的。                                                                                                                                                                                                                             |
-| `/voice`              | B             | 说话当 prompt，描述更自然。                                                                                                                                                                                                                                                                              |
-| `/btw`                | C             | 任务中途提问，不打断主对话。                                                                                                                                                                                                                                                                                 |
-| Teleport / 远程控制       | 视场景           | 手机↔网页↔终端迁移会话。                                                                                                                                                                                                                                                                                  |
-| Shell 模式（`!` 开头）      | C（被低估）        | 跑终端命令且让 Claude 看到输出。                                                                                                                                                                                                                                                                           |
-| `/radio`              | 氛围向           | 放 lo-fi。                                                                                                                                                                                                                                                                                       |
-| `/context`            | B             | 看当前上下文占用。                                                                                                                                                                                                                                                                                      |
-| `/compact`            | 自用 B / 自动触发 C | 自动 compact 常等于质量下滑，大任务中途出现就新开会话；需要时自己跑并指定保留内容。                                                                                                                                                                                                                                                 |
-| `/loop`               | 实用            | 类似 AI cron：按间隔重复任务（实现 issue、安全扫描、功能头脑风暴等）。                                                                                                                                                                                                                                                     |
-| 目标驱动持续工作              | B～A           | 给目标让它一直做到满足或需要人介入。                                                                                                                                                                                                                                                                             |
-| Sub-agents            | A～S（看配额）      | 主 agent 派生有独立上下文的子 agent，适合研究/审查/调试；多 agent 很吃额度。                                                                                                                                                                                                                                              |
-| Worktrees             | A             | 每聊天一个隔离工作树，适合并行 AI 开发。                                                                                                                                                                                                                                                                         |
+我喜欢在 IDE 里配合 Agent 工作：代码、差异和终端输出都在同一处，审查起来比较顺手。下面的等级是我的个人评价，不是客观排名；Claude Code 功能会变化，文章日期也早于本次资料核对，使用前应以当前官方文档为准。
 
-**Claude Code 中的上下文 / Token 管理**
+| 功能 | 我的评价 | 我会怎么用 |
+|---|---|---|
+| `/init` 与 `CLAUDE.md` | C/D（文件内容可升） | 用来给项目补充说明，例如现状、约定和常用命令。文件写得越长不代表越好；我会留下任务确实需要、且不容易从代码读出的信息。 |
+| Skills | A 到 S（看内容） | 把可重复的工作流程写成可调用说明。我觉得它比把所有规则塞进一个项目记忆文件更容易分工；具体 Skill 仍要先看来源和适用范围。我的个人收藏包括 [graph-docs-cli](https://github.com/mattpocock/graph-docs-cli) 与 [Cursor 的代码审查 Skill](https://github.com/cursor/plugins/blob/main/cursor-team-kit/skills/thermo-nuclear-code-quality-review/SKILL.md)，这是个人收藏，不是背书。 |
+| Plan Mode | 必备于大任务 | 让它先读代码、列步骤，我先审范围再让它改。小改动未必值得多走一轮。 |
+| 验证 | S / 三个 S | 让完成条件能被检查：测试、类型检查、lint 或浏览器观察都可以，选和改动匹配的那一种。测试不是模型“自证正确”，结果仍要看。 |
+| MCP | A | 需要连接代码库外的系统时再用，例如 GitHub 或数据库。少装、只装必要的工具，权限也要看清。 |
+| `/voice` | B | 适合用语音快速描述任务；结果仍要整理成明确约束。 |
+| `/btw` | C | 用于在主任务中插入一个小问题，实际价值看工作流。 |
+| Teleport / 远程控制 | 视场景 | 会话在设备间迁移时有用，平时未必需要。 |
+| Shell 模式（`!`） | C（我低估过） | 直接运行 shell 命令并让 Claude 看到输出。运行前仍要检查命令影响范围。 |
+| `/radio` | 氛围向 | 我把它当背景功能，不是开发必需品。 |
+| `/context` | B | 查看当前上下文使用情况，决定是否需要整理任务材料。 |
+| `/compact` | 自用 B / 自动触发 C | 我倾向于在长任务里主动整理上下文；自动压缩是否损害当前任务质量，不能只凭出现时机断定，关键是检查保留了哪些要求。 |
+| `/loop` | 实用 | 可用于按间隔重复执行任务。循环任务要有明确停止条件，并审查每轮会执行什么。 |
+| 目标驱动持续工作 | B 到 A | 给出完成条件，让它持续推进；涉及外部影响或模糊判断时仍要留人工介入点。 |
+| Sub-agents | A 到 S（看配额） | 适合拆开研究、审查等工作，但会增加上下文与调用消耗。 |
+| Worktrees | A | 并行任务各自隔离修改时很方便；合并前仍要检查差异。 |
 
-- 每个新任务新开会话。
-- 别让它乱探索文件/网站。
-- 提示要**蠢到具体**。
-- 大约 10万～20万 token 后质量开始掉。
-- 自动 `/compact` 中途出现 → 新开。
+参考：[Claude Code 官方文档](https://docs.anthropic.com/en/docs/claude-code/overview)（资料核对日期 2026-10-14）。

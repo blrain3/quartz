@@ -1,5 +1,5 @@
 ---
-title: 使用AI辅助编程
+title: "把 AI 编程任务拆小，再给它验证办法"
 date: 2025-12-10
 related: "[[Claude Code 中值得使用的功能]]"
 tags:

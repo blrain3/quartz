@@ -1,5 +1,5 @@
 ---
-title: Linux 文件系统
+title: "别把 /root 当成 Linux 的根目录"
 date: 2025-04-24
 tags:
   - 技术
@@ -8,9 +8,11 @@ tags:
   - 文件系统
   - 命令行
 ---
+
+
 ## Linux 文件系统层级结构
 
-Linux 里的所有文件都存在文件系统里。它的结构像一棵倒过来的树，因为根在最顶上。
+Linux 的路径从根目录 `/` 开始，目录层级常画成一棵倒树。这里说的是目录命名约定，不是磁盘分区或某一种文件系统实现。
 
 `/` 是根目录，也是文件系统的起点。根目录包含系统上所有其他目录和文件。`/` 字符还用作路径名之间的目录分隔符。
 ![](https://r2.salix.eu.org/obsidian/20260507161515444.webp)
@@ -22,18 +24,18 @@ Linux 里的所有文件都存在文件系统里。它的结构像一棵倒过�
 | /bin  | 核心命令二进制文件                         |
 | /boot | 启动引导器的静态文件，启动流程的必备组件。 |
 | /etc  | 主机专属系统配置                           |
-| /home | 用户主目录                                 |
-| /root | 管理员的根用户主目录                       |
-| /lib  | 必需的共享库和内核模块                     |
+| /home | 普通用户的主目录（可选）                   |
+| /root | root 用户的主目录（可选；不是 `/`）        |
+| /lib  | 兼容路径；在 merged-/usr 系统上可能链接到 `/usr/lib` |
 | /mnt  | 临时挂载文件系统的挂载点                   |
 | /opt  | 附加应用软件包                             |
 | /usr  | 已安装的软件和共享库                       |
-| /var  | 跨启动间持久化的变量数据                   |
-| /tmp  | 所有用户都能访问的临时文件                 |
+| /var  | 可变数据，如日志、缓存或队列；部分内容可能是暂态数据 |
+| /tmp  | 临时文件目录；文件不保证跨重启保留，权限仍限制其他用户访问 |
 
 > [!TIP] 可以用 `man hier` 命令来了解更多关于文件系统的信息。
 
-可以用 `tree -d -L 1` 命令检查文件系统。调整 `-L` 参数就能改变树的显示深度。
+要查看根目录下一层目录，可用 `tree -d -L 1 /`；不带 `/` 时，命令从当前工作目录开始列。它只展示目录，不检查文件系统健康。
 不过得先安装`tree`包
 
 ## Linux 文件系统
@@ -67,7 +69,7 @@ wen@LAPTOP-P634H6KM:~/projects$ pwd
 
 ## 管理文件和文件夹
 
-> [!Tip] `ls -l` 输出结果的首字母就能区分文件和文件夹。`'-'` 代表文件，`'d'` 代表文件夹。
+> [!Tip] `ls -l` 长格式开头的类型位可区分普通文件（`-`）、目录（`d`）、符号链接（`l`）以及设备、FIFO、socket 等其他类型。
 
 ```bash
 wen@LAPTOP-P634H6KM:~/projects$ ls -l
@@ -105,7 +107,7 @@ mkdir -p tools/index/helper-scripts
 
 ### 创建新文件
 
-`touch` 命令可以创建一个**空文件**，用法如下：
+目标不存在时，`touch` 会创建空文件；目标已存在时，它更新时间戳，不会清空文件内容。
 
 ```bash
 touch file.txt
@@ -119,7 +121,7 @@ touch file1.txt file2.txt file3.txt
 
 ### 删除文件和目录
 
-可以用 `rm` 命令来删除文件和非空目录。
+`rm` 默认删除文件；删除目录及其内容需显式使用 `-r`。`-f` 忽略不存在的目标并且不提示，不会绕过权限检查。
 
 | 命令              | 描述                                  |
 | ----------------- | ------------------------------------- |
@@ -128,7 +130,7 @@ touch file1.txt file2.txt file3.txt
 | `rm -f file.txt`  | 直接删除文件 `file.txt`，不弹确认提示 |
 | `rmdir`目录       | 删除空目录                            |
 
-> [!warning] 使用 `-f` 标记时要小心，因为删除文件前不会征求你的意见。另外，在 `root` 文件夹里执行 `rm` 命令也要谨慎，搞不好会删掉重要的系统文件。
+> [!warning] `rm` 不提供回收站。使用递归参数前核对目标路径；`/` 是根目录，`/root` 是 root 用户主目录，两者不是一回事。
 
 ### 复制文件
 
@@ -136,7 +138,7 @@ touch file1.txt file2.txt file3.txt
 
 -  **复制文件的语法：** `cp source_file destination_of_file`
 
-此命令将名为 `file1.txt` 的文件复制到新位置 `/home/adam/logs`。
+若 `/home/adam/logs` 已是目录，`cp` 会把文件放入其中；若目标路径不存在，它可能被当成新文件名。
 
 ```bash
 cp file1.txt /home/adam/logs
@@ -185,7 +187,7 @@ mv dir1 dir2
 
 ### 定位文件和文件夹
 
-`find`命令能高效搜索文件、文件夹、字符以及块。
+`find` 从给定起点遍历文件条目，并按名称、类型、大小、时间等条件筛选；它不搜索文件正文。
 
  `find` 命令的基本语法：
 
@@ -194,17 +196,17 @@ find /path/ -type f -name file-to-search
 ```
 
 - `/path` 是文件预期所在的路径，也是搜索文件的起点。路径也可以是 `/` 或 `.`，分别代表根目录和当前目录。
-- `-type` 表示文件描述符，可以是以下几种之一：
+- `-type` 按文件类型筛选，可用以下常见类型字母：
 - `f` — **普通文件**，比如文本文件、图片以及隐藏文件。
 - `d` — **目录**。这些是正在考虑的文件夹。
 - `l` — **符号链接**。符号链接指向文件，就跟快捷方式差不多。
-- `c` — **字符设备**。用来访问字符设备的文件就叫字符设备文件。驱动程序通过发送和接收单个字符（字节、八位组）来和字符设备通信。例如键盘、声卡和鼠标。
-- `b` — **块设备**。用来访问块设备的文件被称为块设备文件。驱动程序通过发送和接收整块数据来与块设备通信，比如USB和光盘就是典型的例子。
-- `-name` 是你要搜索的文件类型名称。
+- `c` — **字符设备文件**。具体设备与驱动的工作方式有关，不要把键盘、声卡等物理设备直接等同于某个文件条目。
+- `b` — **块设备文件**，用于访问按块组织数据的设备。
+- `-name` 按条目的 basename 匹配 shell 通配模式；例如 `"*.html"` 匹配以 `.html` 结尾的名称。
 
 ### 按文件名或扩展名搜索文件
 
-假设我们要找文件名里带“style”的文件。用这个命令就行：
+若要找以 `style` 开头的文件名，可用下面的模式；要匹配名称中任意位置含 `style`，改用 `*style*`：
 
 ```bash
 find . -type f -name "style*"
@@ -272,7 +274,7 @@ find . -type f -name ".*"
 
 ### 按类型搜索其他文件
 
-可以通过提供`c`到`-type`来搜索字符块文件：
+可以通过提供`c`到`-type`来搜索字符设备文件：
 
 ```bash
 find / -type c
@@ -314,14 +316,12 @@ find . -type d
 find / -size +250M
 ```
 
-这里列出的是文件大小超过 `250MB` 的文件。
+GNU `find` 中 `-size +250M` 表示逻辑大小大于 250 MiB；`M` 是二进制单位。要只找普通文件，可加 `-type f`。
 
  其他单位包括：
 
--  `G`：吉字节
--  `M`：兆字节（MB）
--  `K`：千字节
--  `c`：字节。
+- `G`、`M`、`k`：GiB、MiB、KiB
+- `c`：字节。GNU `find` 使用小写 `k`，具体实现请查看本机手册。
 
 直接替换成对应的单位就行。
 
@@ -337,15 +337,15 @@ find <directory> -type f -size +N<Unit Type>
 find /path -name "*.txt" -mtime -10
 ```
 
-- **`-mtime +10`** 意思是你找的是10天前修改过的文件。
-- **`-mtime -10`** 表示不到10天。
-- **`-mtime 10`** 如果没 `+` 或 `-`，就表示正好 10 天。
+- `-mtime -10`：不足 10 个完整的 24 小时周期。
+- `-mtime 10`：至少 10 且不足 11 个完整周期。
+- `-mtime +10`：至少 11 个完整周期。它们不是按日历日期匹配。
 
 ## 查看文件的基本命令
 
 ### 拼接并显示文件
 
-Linux 中的 `cat` 命令用来查看文件内容，还能拼接文件或创建新文件。
+`cat` 把指定文件或标准输入复制到标准输出。创建输出文件通常是 shell 重定向的作用，例如 `cat file > copy`；不是 `cat` 单独提供了创建命令。
 
 基本语法：
 
@@ -353,7 +353,7 @@ Linux 中的 `cat` 命令用来查看文件内容，还能拼接文件或创�
 cat [options] [file]
 ```
 
-使用 `cat` 最简单的方法就是不加任何选项或参数，这样会在终端上显示文件内容。
+运行 `cat file.txt` 会输出指定文件。若不提供文件参数，`cat` 从标准输入读取，通常会等待输入直到收到 EOF。
 例如，如果想查看名为 `file.txt` 的文件内容，可以使用以下命令：
 
 ```bash
@@ -407,100 +407,30 @@ tail -n 50 file.txt
 
 要修改显示的行数，你可以在 `-n` 选项后面加上想显示的行数。
 
-### 统计字数、行数和字符数
+### 统计行数、词数和字节数
 
-可以用 `wc` 命令统计文件中的字数、行数和字符数。
-
-比如，运行 `wc syslog.log` 之后我得到了这样的结果：
+`wc` 默认依次输出换行符数量、按空白分隔的词数和字节数。原笔记中的 `64367` 因此应标作字节数，不能据此称为字符数；要统计字符可用 `-m`，统计字节可用 `-c`：
 
 ```bash
-1669 9623 64367 syslog.log
+wc syslog.log
+wc -l -w -m syslog.log
 ```
 
- 在上面的输出中，
-
-- `1669` 表示文件 `syslog.log` 中的行数
-- `9623`表示文件`syslog.log`中的字数
-- `64367`表示文件`syslog.log`的字符数
-
-命令 `wc syslog.log` 统计了文件 `syslog.log` 里的 `1669` 行、`9623` 个词和 `64367` 个字符。
+`1669 9623 64367` 是无法由现有文件复核的旧记录，不代表当前测试结果。
 
 ### 逐行比较文件
 
-直接用命令行里的 `diff` 命令就能对比两个文件。
-
-`diff` 命令的基本语法是：
+`diff` 比较两个文件。下面只展示常见调用形式；具体差异由输入文件决定。
 
 ```bash
-diff [options] file1 file2
+diff -q file1 file2
+diff -u file1 file2
+diff -y file1 file2
 ```
 
-这里有两个文件，`hello.py` 和 `also-hello.py`，用 `diff` 命令来对比它们：
+`-q` 只报告是否不同；`-u` 用统一格式显示差异，行首空格表示上下文，`-` 表示左侧文件删除的行，`+` 表示右侧新增的行；`-y` 并排显示，`|` 表示两侧对应行不同，`<` 或 `>` 表示该行只在一侧出现。
 
-```bash
-# contents of hello.py
+统一格式的 `@@ -3,4 +3,5 @@` 表示旧文件从第 3 行起有 4 行，新文件从第 3 行起有 5 行；逗号后是行数，不是结束行号。
 
-def greet(name):
-    return f"Hello, {name}!"
-
-user = input("Enter your name: ")
-print(greet(user))
-```
-
-```bash
-# contents of also-hello.py
-
-more also-hello.py
-def greet(name):
-    return fHello, {name}!
-
-user = input(Enter your name: )
-print(greet(user))
-print("Nice to meet you")
-```
-
-1. 检查这些文件是否相同
-
-```bash
-diff -q hello.py also-hello.py
-# Output
-Files hello.py and also-hello.py differ
-```
-
-2. 看看这些文件有啥不同。你可以用 `-u` 这个参数来查看统一输出格式：
-
-```bash
-diff -u hello.py also-hello.py
---- hello.py    2024-05-24 18:31:29.891690478 +0500
-+++ also-hello.py    2024-05-24 18:32:17.207921795 +0500
-@@ -3,4 +3,5 @@
-
- user = input(Enter your name: )
- print(greet(user))
-+print("Nice to meet you")
-```
-
- 在上面的输出中：
-
-- `--- hello.py 2024-05-24 18:31:29.891690478 +0500` 表示正在比对的文件及其时间戳。
-- `+++ also-hello.py 2024-05-24 18:32:17.207921795 +0500`表示被比较的另一个文件及其时间戳。
-- `@@ -3,4 +3,5 @@`显示了发生变更的行号。这里的意思是，原始文件中的第3到4行，在修改后的文件中变成了第3到5行。
-- `user = input(Enter your name: )` 是原始文件中的一行。
-- `print(greet(user))` 是原始文件中的另一行。
-- `+print("Nice to meet you")` 是修改后的文件中新增的那一行。
-
-3. 要以并排方式查看差异，可以使用 `-y` 这个参数：
-
-```bash
-diff -y hello.py also-hello.py
-# Output
-def greet(name):                        def greet(name):
-    return fHello, {name}!                  return fHello, {name}!
-
-user = input(Enter your name: )          user = input(Enter your name: )
-print(greet(user))                       print(greet(user))
-                                        > print("Nice to meet you")
-```
-
-- 两个文件中相同的行会并排显示。
-- 不同的行会用 `>` 符号标记，表示该行只出现在其中一个文件里。
+参考：[GNU `find` 手册](https://man7.org/linux/man-pages/man1/find.1.html) · [GNU `wc` 手册](https://www.gnu.org/software/coreutils/manual/html_node/wc-invocation.html) · [GNU Diffutils unified 格式](https://ftp.gnu.org/old-gnu/Manuals/diffutils-2.8.1/html_node/Detailed-Unified.html)
+> 本文中的路径、提示符和输出是示例，不构成当前环境的运行记录。GNU `find`、`ls` 等细节不一定适用于所有非 GNU 实现。

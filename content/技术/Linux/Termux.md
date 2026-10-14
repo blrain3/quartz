@@ -1,5 +1,5 @@
 ---
-title: Termux
+title: "把手机当终端用：Termux 的安装与配置"
 date: 2025-08-12
 related: "[[Linux 文件系统]] [[Linux 安装 Tailscale]]"
 tags:
@@ -8,18 +8,20 @@ tags:
   - Termux
   - Android
 ---
-**Termux**是无需 Root 的 Android 终端模拟器与 Linux 环境，提供完整命令行体验，支持包管理、编程与脚本运行。核心价值是把手机变成便携 Linux 电脑。
+
+
+**Termux** 在 Android 上提供终端和软件包环境，常用于命令行工具、编程与脚本。它不是完整的 Linux 发行版；Android 的权限和后台管理仍然适用。
 
 > [!note] 官方参考
 > [Termux 中文官网](https://termux.dev/cn/) · [Termux Wiki](https://wiki.termux.com/wiki/Main_Page) · [learn-termux](https://github.com/yxd1024/learn-termux)
 
 ### 安装与初始化
 
-1. 从 **F-Droid** 下载安装（Google Play 版已停更）。
+1. 从 Termux 官方列出的渠道选择安装包。F-Droid 与 GitHub 发布渠道的签名不能混装更新；先确认当前安装来源，再从同一来源升级。Google Play 渠道也不能简单概括为“已停更”，不同发布轨道状态有差异。
 2. 首次打开执行：
 
 ```bash
-termux-setup-storage              # 授予存储权限
+termux-setup-storage              # 请求共享存储访问权限
 pkg update && pkg upgrade -y      # 更新软件源与全部软件包
 ```
 
@@ -30,12 +32,13 @@ pkg update && pkg upgrade -y      # 更新软件源与全部软件包
 | `pkg search <name>`               | 搜索软件包          |
 | `pkg install <name>`              | 安装                |
 | `pkg uninstall <name>`            | 卸载                |
-| `pkg list` / `pkg list-installed` | 列出全部 / 已安装包 |
-| `pkg show <name>`                 | 查看包信息          |
+| `pkg list-installed` | 列出已安装包 |
+| `pkg list-all` | 列出软件源中的可用包 |
+| `pkg show <name>` | 查看包信息 |
 | `pkg update`                      | 更新软件源          |
 | `pkg upgrade -y`                  | 升级全部软件包      |
 
-> [!note] `pkg` 是 `apt` 的 Termux 优化封装，日常优先使用 `pkg`；`apt` 命令同样可用。
+> [!note] `pkg` 是 Termux 对包管理操作的封装。Termux 环境与 proot 里的 Ubuntu 等环境各有自己的软件包，命令要在对应环境里运行。
 
 ### 安装 Linux 发行版（proot-distro）
 
@@ -95,11 +98,11 @@ apt install tmux -y        # proot 的 Ubuntu 环境内
 | `Ctrl+b` 然后 `c`       | 新建窗口             |
 | `Ctrl+b` 然后 `n` / `p` | 切换窗口             |
 
-Tmux 使多个任务可同时运行，关闭 App 不中断进程。
+Tmux 可让会话在终端分离后继续运行，但 Android 可能限制或回收 Termux 后台进程；它不能保证关闭 App 或系统休眠后任务一直存活。
 
 ### Windows 游戏（Mobox）
 
-**Mobox**：基于 Wine + Box64 的开源项目，无需 Root 在 Android 运行 Windows PC 游戏，[项目地址](https://github.com/olegos2/mobox)。
+**Mobox** 是基于 Wine 与 Box64 的项目，尝试在部分 Android 设备上运行 Windows 软件或游戏。兼容性取决于设备和软件；这里保留项目链接，不把它写成普遍可用的游戏方案：[Mobox](https://github.com/olegos2/mobox)。
 
 ### Neovim + LazyVim
 
@@ -113,8 +116,10 @@ mv ~/.local/share/nvim ~/.local/share/nvim.bak 2>/dev/null
 
 # 克隆 LazyVim Starter 配置
 git clone https://github.com/LazyVim/starter ~/.config/nvim
-rm -rf ~/.config/nvim/.git        # 删除 .git 便于自定义
+rm -rf ~/.config/nvim/.git        # 删除克隆目录的 Git 元数据；执行前确认路径
 nvim                              # 首次启动自动下载插件
 ```
 
 参考配置：[dotLazyVim](https://github.com/Veha0001/dotLazyVim)
+
+> 这篇保留的是命令参考，不是 Android 设备上的逐条实测记录。Proot 的稳定版与 main 分支可能有行为差异，遇到问题先核对自己安装的版本。
