@@ -1,104 +1,47 @@
-// Patch built postscript-*.js: wrap window.location.pathname in decodeURIComponent
-// for the graph's getFullSlugFromUrl equivalent.
-// Targets only the pattern: ;let p=window.location.pathname;return p.endsWith("/")
-// which uniquely identifies the slug-from-URL function in postscript.js.
-// This runs after `npx quartz build` via the `postbuild` npm script.
-//
-// Since the upstream v5 merge, the graph plugin comes from npm
-// (@quartz-community/graph) instead of a git clone tracked in quartz.lock.json.
-//
-// SAFETY: This targets one signature in the emitted postscript. The patch is
-// skipped when the graph plugin is disabled in the active Quartz config; when
-// enabled, a missing signature is reported without failing the build because
-// this output patch is optional.
-
-import { readFileSync, writeFileSync, readdirSync, existsSync } from "fs"
-import { resolve } from "path"
+// Validate the Graph module emitted by the full v5 build lifecycle.
+// The prebuild patch owns normalization; do not rewrite content-hashed output.
+import { readFileSync, readdirSync, existsSync } from "node:fs"
+import { resolve, dirname, relative, isAbsolute } from "node:path"
 import { parse } from "yaml"
+import { graphRuntimeFunction, nativeGraphPathFunction } from "./graph-path.mjs"
 
 const root = resolve(import.meta.dirname, "..")
-
-const PLUGIN_PKG = "@quartz-community/graph"
-function graphIsEnabled() {
-  const config = parse(readFileSync(resolve(root, "quartz.config.yaml"), "utf8"))
-  return config.plugins?.some((plugin) => plugin.source === PLUGIN_PKG && plugin.enabled !== false)
-}
-
-if (!graphIsEnabled()) {
-  console.log(`[patch-graph-output] ${PLUGIN_PKG} is disabled in quartz.config.yaml; skipping.`)
+const plugin = "@quartz-community/graph"
+const config = parse(readFileSync(resolve(root, "quartz.config.yaml"), "utf8"))
+if (!config.plugins?.some((p) => p.source === plugin && p.enabled !== false)) {
+  console.log(`[patch-graph-output] ${plugin} disabled; skipping.`)
   process.exit(0)
 }
+const publicDir = resolve(root, "public")
+if (!existsSync(publicDir)) throw new Error("[patch-graph-output] public/ is missing")
+const entries = readdirSync(publicDir).filter((f) => /^postscript(?:-.*)?\.js$/.test(f))
+if (entries.length !== 1)
+  throw new Error(`[patch-graph-output] Expected one postscript entry; found ${entries.length}`)
 
-// Find the hashed postscript file
-let postscript = null
-const files = readdirSync(resolve(root, "public"))
-for (const f of files) {
-  if (f.startsWith("postscript-") && f.endsWith(".js")) {
-    postscript = resolve(root, "public", f)
-    break
-  }
+const seen = new Set()
+const graphModules = []
+function inspect(file) {
+  const rel = relative(publicDir, file)
+  if (rel.startsWith("..") || isAbsolute(rel))
+    throw new Error(`[patch-graph-output] Import escapes public/: ${file}`)
+  if (seen.has(file)) return
+  seen.add(file)
+  const src = readFileSync(file, "utf8")
+  if (src.includes("global-graph-icon")) graphModules.push({ file, src })
+  for (const match of src.matchAll(/import\(\s*["'](\.\.?\/[^"']+)["']\s*\)/g))
+    inspect(resolve(dirname(file), match[1]))
 }
-
-// Fallback: unhashed postscript.js (local dev build)
-if (!postscript) {
-  const fallback = resolve(root, "public", "postscript.js")
-  try {
-    readFileSync(fallback)
-    postscript = fallback
-  } catch {
-    /* not found */
-  }
-}
-
-if (!postscript) {
-  console.log("[patch-graph-output] No postscript file found in public/. Skipping.")
-  process.exit(0)
-}
-
-let src = readFileSync(postscript, "utf-8")
-let count = 0
-
-// Replace only window.location.pathname;return p.endsWith("/")
-// This is the signature of getFullSlugFromUrl (minified).
-// Other location.pathname uses (SPA nav comparisons) are left untouched.
-const OLD = 'window.location.pathname;return p.endsWith("/'
-const NEW = 'decodeURIComponent(window.location.pathname);return p.endsWith("/'
-
-// Regex fallback for minor minification changes
-const OLD_REGEX = /window\.location\.pathname;return\s+\w+\.endsWith\("\/"/
-
-if (src.includes(NEW)) {
-  console.log(`[patch-graph-output] Already patched: ${postscript}`)
-  process.exit(0)
-}
-
-let idx = src.indexOf(OLD)
-while (idx !== -1) {
-  count++
-  src = src.slice(0, idx) + NEW + src.slice(idx + OLD.length)
-  idx = src.indexOf(OLD)
-}
-
-// Try regex fallback if exact match found nothing
-if (count === 0) {
-  const regexMatch = src.match(OLD_REGEX)
-  if (regexMatch) {
-    const matched = regexMatch[0]
-    const regexNew = matched.replace(
-      "window.location.pathname",
-      "decodeURIComponent(window.location.pathname)",
-    )
-    src = src.replace(matched, regexNew)
-    count = 1
-  }
-}
-
-writeFileSync(postscript, src, "utf-8")
-
-if (count > 0) {
-  console.log(`[patch-graph-output] Patched ${count} occurrence(s) in ${postscript}`)
-} else {
-  console.log(
-    `[patch-graph-output] Pattern not found in ${postscript}. Already patched or graph code changed?`,
+inspect(resolve(publicDir, entries[0]))
+if (graphModules.length !== 1)
+  throw new Error(
+    `[patch-graph-output] Expected one reachable Graph module; found ${graphModules.length}`,
   )
-}
+const { file, src } = graphModules[0]
+if (
+  src.split(graphRuntimeFunction).length - 1 !== 1 ||
+  src.split(nativeGraphPathFunction).length - 1 !== 1
+)
+  throw new Error(
+    `[patch-graph-output] Graph module lacks the exact normalized slug resolver: ${file}`,
+  )
+console.log(`[patch-graph-output] Verified reachable, base-path-aware Graph module: ${file}`)

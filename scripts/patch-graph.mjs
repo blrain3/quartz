@@ -1,118 +1,53 @@
-// Patch graph plugin: decodeURIComponent for Chinese URL slugs
-// Runs after `npm install` / `npx quartz plugin install` to fix getFullSlugFromUrl
-//
-// Since the upstream v5 merge, plugins are installed from npm
-// (@quartz-community/graph) instead of git clones under .quartz/plugins.
-// This patch targets node_modules and verifies the installed npm version.
-//
-// SAFETY: This patch depends on the minified function name `we` which is
-// specific to @quartz-community/graph@0.1.0. If the plugin is updated, the
-// minified name will likely change and this patch will fail. The script
-// enforces failure (exit code 1) when the pattern is not found in existing
-// files, so the issue is caught at build time rather than silently skipped.
+// Patch only Graph 1.0.0's native outer resolver; keep the inner reader unchanged.
+import { readFileSync, writeFileSync, existsSync } from "node:fs"
+import { resolve, dirname } from "node:path"
+import { fileURLToPath } from "node:url"
+import { parse } from "yaml"
+import {
+  graphRuntimeFunction,
+  nativeGraphPathFunction,
+  legacyGraphPathFunction,
+} from "./graph-path.mjs"
 
-import { readFileSync, writeFileSync, existsSync } from "fs"
-import { resolve, dirname } from "path"
-import { fileURLToPath } from "url"
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const root = resolve(__dirname, "..")
-
-const PLUGIN_PKG = "@quartz-community/graph"
-const EXPECTED_MAJOR = 1
-
-const targets = [
-  "node_modules/@quartz-community/graph/dist/index.js",
-  "node_modules/@quartz-community/graph/dist/components/index.js",
-]
-
-// Pattern: minified function that reads window.location.pathname for slug matching.
-// The function name `we` is esbuild's minified output and is tied to the specific
-// plugin version. If the pattern changes, update OLD and verify against the new
-// plugin source.
-const OLD = "function we(){let u=window.location.pathname"
-const NEW = "function we(){let u=decodeURIComponent(window.location.pathname)"
-
-// Also try a regex fallback for resilience against minor minification changes
-const OLD_REGEX = /function\s+\w+\(\)\s*\{\s*let\s+\w+\s*=\s*window\.location\.pathname/
-
-function checkVersion() {
-  const pkgPath = resolve(root, "node_modules", PLUGIN_PKG, "package.json")
-  if (!existsSync(pkgPath)) {
-    console.warn(`[patch-graph] Warning: ${PLUGIN_PKG} not installed, skipping version check`)
-    return
-  }
-  const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"))
-  if (Number(pkg.version.split(".")[0]) !== EXPECTED_MAJOR)
-    throw new Error(
-      `[patch-graph] Unsupported ${PLUGIN_PKG} version ${pkg.version}; expected major ${EXPECTED_MAJOR}`,
-    )
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "..")
+const plugin = "@quartz-community/graph"
+const config = parse(readFileSync(resolve(root, "quartz.config.yaml"), "utf8"))
+if (!config.plugins?.some((p) => p.source === plugin && p.enabled !== false)) {
+  console.log(`[patch-graph] ${plugin} disabled; skipping.`)
+  process.exit(0)
 }
-
-let patched = 0
-let failed = 0
-let skipped = 0
-
-checkVersion()
-
-for (const rel of targets) {
-  const abs = resolve(root, rel)
-  if (!existsSync(abs)) {
-    console.log(`[patch-graph] Skipping ${rel} - not found`)
-    skipped++
+const pkgPath = resolve(root, "node_modules", plugin, "package.json")
+if (!existsSync(pkgPath)) throw new Error(`[patch-graph] Required package missing: ${pkgPath}`)
+const version = JSON.parse(readFileSync(pkgPath, "utf8")).version
+if (version !== "1.0.0") throw new Error(`[patch-graph] Expected ${plugin}@1.0.0, found ${version}`)
+const targets = ["dist/index.js", "dist/components/index.js"].map((p) =>
+  resolve(root, "node_modules", plugin, p),
+)
+const originalOuter = /function u\(\)\{var o=we\(\),a=Hu\(\);return[^{}]*,o\}/g
+const count = (src, literal) => src.split(literal).length - 1
+const changes = []
+for (const file of targets) {
+  if (!existsSync(file)) throw new Error(`[patch-graph] Required target missing: ${file}`)
+  const original = readFileSync(file, "utf8")
+  let src = original
+  const legacyCount = count(src, legacyGraphPathFunction)
+  if (legacyCount > 1) throw new Error(`[patch-graph] Ambiguous legacy resolver: ${file}`)
+  if (legacyCount === 1) src = src.replace(legacyGraphPathFunction, nativeGraphPathFunction)
+  if (count(src, nativeGraphPathFunction) !== 1)
+    throw new Error(`[patch-graph] Required native pathname reader not found exactly once: ${file}`)
+  const patchedCount = count(src, graphRuntimeFunction)
+  const matches = [...src.matchAll(originalOuter)]
+  if (patchedCount === 1 && matches.length === 0) {
+    changes.push({ file, original, src })
     continue
   }
-  let src = readFileSync(abs, "utf-8")
-  if (
-    /function\s+\w+\(\)\s*\{\s*let\s+\w+\s*=\s*decodeURI\(window\.location\.pathname\)/.test(src)
-  ) {
-    console.log(`[patch-graph] Upstream already decodes the pathname: ${rel}`)
-    patched++
-    continue
-  }
-  if (src.includes(NEW)) {
-    console.log(`[patch-graph] Already patched: ${rel}`)
-    patched++
-    continue
-  }
-  const count = src.split(OLD).length - 1
-  if (count === 0) {
-    // Try regex fallback for minor minification changes
-    const regexMatch = src.match(OLD_REGEX)
-    if (regexMatch) {
-      const matched = regexMatch[0]
-      const regexNew = matched.replace(
-        "window.location.pathname",
-        "decodeURIComponent(window.location.pathname)",
-      )
-      src = src.replaceAll(matched, regexNew)
-      writeFileSync(abs, src, "utf-8")
-      console.log(`[patch-graph] Patched via regex fallback: ${rel}`)
-      patched++
-      continue
-    }
-
-    // File exists but pattern not found - this is a failure
-    console.error(
-      `[patch-graph] ERROR: Pattern not found in ${rel}.` +
-        `\n  The plugin may have been updated. Check the minified output and update the pattern.`,
-    )
-    failed++
-    continue
-  }
-  src = src.replaceAll(OLD, NEW)
-  writeFileSync(abs, src, "utf-8")
-  console.log(`[patch-graph] Patched ${count} occurrence(s) in ${rel}`)
-  patched++
+  if (patchedCount !== 0 || matches.length !== 1)
+    throw new Error(`[patch-graph] Expected one native outer resolver: ${file}`)
+  src = src.replace(originalOuter, graphRuntimeFunction)
+  changes.push({ file, original, src })
 }
-
-if (failed > 0) {
-  console.error(`[patch-graph] FAILED: ${failed} file(s) could not be patched.`)
-  process.exit(1)
-}
-
-if (patched === 0 && skipped === targets.length) {
-  console.log("[patch-graph] Nothing to patch (all targets missing).")
-} else {
-  console.log(`[patch-graph] Done. ${patched} file(s) updated, ${skipped} skipped.`)
+// Validate both targets before writing either, including partial-match failures.
+for (const { file, original, src } of changes) {
+  if (src !== original) writeFileSync(file, src, "utf8")
+  console.log(`[patch-graph] Verified single-layer resolver: ${file}`)
 }

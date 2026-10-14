@@ -135,6 +135,18 @@ plugins:
     layout:
       position: right
       priority: 50
+  - source: "@quartz-community/graph"
+    enabled: true
+    options:
+      localGraph:
+        depth: 1
+        showTags: false
+      globalGraph:
+        depth: -1
+        showTags: false
+    layout:
+      position: right
+      priority: 10
   - source: "@quartz-community/article-title"
     enabled: true
     layout:
