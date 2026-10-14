@@ -315,3 +315,37 @@ test("Graph prebuild ignores unrelated markers and rejects partial targets befor
     rmSync(root, { recursive: true, force: true })
   }
 })
+
+test("mermaid patch resolves the theme variables and rejects a missing anchor", () => {
+  const pkg = JSON.stringify({
+    name: "@quartz-community/obsidian-flavored-markdown",
+    version: "1.0.0",
+  })
+  const source = `function M(){let r=H.reduce((i,d)=>(i[d]=window.getComputedStyle(document.documentElement).getPropertyValue(d),i),{})}`
+  const root = fixture("patch-mermaid.mjs", {
+    "@quartz-community/obsidian-flavored-markdown/package.json": pkg,
+    "@quartz-community/obsidian-flavored-markdown/dist/index.js": source,
+  })
+  const target = resolve(
+    root,
+    "node_modules/@quartz-community/obsidian-flavored-markdown/dist/index.js",
+  )
+  try {
+    const first = run(root, "patch-mermaid.mjs")
+    assert.equal(first.status, 0, first.stderr)
+    assert.ok(readFileSync(target, "utf8").includes("q-mermaid-resolve"))
+    const second = run(root, "patch-mermaid.mjs")
+    assert.equal(second.status, 0, second.stderr)
+    assert.match(second.stdout, /Already patched/)
+    writeFileSync(target, "unmatched()")
+    assert.notEqual(run(root, "patch-mermaid.mjs").status, 0)
+    writeFileSync(target, source)
+    writeFileSync(
+      resolve(root, "node_modules/@quartz-community/obsidian-flavored-markdown/package.json"),
+      JSON.stringify({ name: "@quartz-community/obsidian-flavored-markdown", version: "2.0.0" }),
+    )
+    assert.notEqual(run(root, "patch-mermaid.mjs").status, 0)
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})

@@ -66,6 +66,7 @@ plugins:
     options:
       enableInHtmlEmbed: false
       enableCheckbox: true
+      mermaid: true
     order: 30
   - source: "@quartz-community/github-flavored-markdown"
     enabled: true
