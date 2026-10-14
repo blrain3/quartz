@@ -8,12 +8,7 @@ tags:
   - TeamSpeak
 ---
 
-
-TeamSpeak 有客户端与服务端，TS3、TS6 的下载、账号和管理方式不能混作一套。先从官方页面选定产品版本与操作系统，再按该版本的说明安装；截图和菜单文字可能随版本变化。
-## 下载客户端
-
-### 官网下载（TS3 / TS6）
-
+我把客户端连接和服务端部署分开记，免得把 TS3、TS6 的步骤混成一套。TeamSpeak 有客户端与服务端，TS3、TS6 的下载、账号和管理方式不能混作一套。先从官方页面选定产品版本与操作系统，再按该版本的说明安装；截图和菜单文字可能随版本变化。
 访问 [TeamSpeak 官方网站](https://www.teamspeak.com/en/)：
 
 <p style="text-align: center;">
@@ -26,8 +21,6 @@ TeamSpeak 有客户端与服务端，TS3、TS6 的下载、账号和管理方式
   <img src="https://tg.salix.eu.org/file/1784631993387_image.webp" width="80%" />
 </p>
 
-### 微软商店下载（当前可用性需在商店确认）
-
 访问 [微软商店页面](https://apps.microsoft.com/detail/xpdcj80kgnrvss?hl=zh-CN&gl=CN)，点击安装即可。
 
 <p style="text-align: center;">
@@ -35,8 +28,6 @@ TeamSpeak 有客户端与服务端，TS3、TS6 的下载、账号和管理方式
 </p>
 
 ---
-
-## 安装步骤
 
 运行安装包，按以下步骤操作：
 
@@ -52,13 +43,7 @@ TeamSpeak 有客户端与服务端，TS3、TS6 的下载、账号和管理方式
   <img src="https://tg.salix.eu.org/file/1784632370353_image.webp" width="80%" />
 </p>
 
-安装完成后即可启动软件。
-
 ---
-
-## 首次配置
-
-### 创建账户
 
 TS6 的账户要求按当前客户端流程确认；TS3 客户端连接服务器通常不要求注册 TeamSpeak 账号。
 
@@ -70,15 +55,9 @@ TS6 的账户要求按当前客户端流程确认；TS3 客户端连接服务器
   <img src="https://tg.salix.eu.org/file/1784686525364_image.webp" width="80%" />
 </p>
 
-### 更改语言
-
-在设置中将界面切换为中文：
-
 <p style="text-align: center;">
   <img src="https://tg.salix.eu.org/file/1784686743328_image.webp" width="80%" />
 </p>
-
-### 连接服务器
 
 点击添加书签，输入服务器地址进行连接：
 
@@ -87,8 +66,6 @@ TS6 的账户要求按当前客户端流程确认；TS3 客户端连接服务器
 </p>
 
 ---
-
-## TS3 说明
 
 TS3 客户端连接服务器通常不需要注册账号。点击 **Connections**，填写可达的服务器地址、昵称及服务端要求的密码；连接仍取决于服务端状态、网络规则和认证设置。
 
@@ -107,8 +84,6 @@ TS3 客户端连接服务器通常不需要注册账号。点击 **Connections**
 </p>
 
 ---
-
-## 搭建服务器
 
 要创建自己的语音房间，需要运行 TeamSpeak 服务端软件。可以选择以下方式：
 
@@ -130,11 +105,7 @@ TS3 客户端连接服务器通常不需要注册账号。点击 **Connections**
 
 服务器规格不能只凭“数十人”保证；语音编解码、实例性能、网络、其他服务和当前 TS 版本都会影响容量。先按官方要求部署，再监控资源并逐步测试。
 
-### 下载服务端
-
 访问 [TeamSpeak 官网下载页面](https://www.teamspeak.com/en/downloads#server)，选择对应操作系统下载 Server 版本。
-
-### 部署到 Linux 服务器（推荐）
 
 以下操作以 Ubuntu / Debian 为例：
 
@@ -165,7 +136,7 @@ touch .ts3server_license_accepted
   <img src="https://tg.salix.eu.org/file/1784688128674_image.webp" width="80%" />
 </p>
 
-### 开放端口
+服务端启动前，网络侧只开放实际需要的端口。
 
 只开放客户端实际需要的端口，并按当前服务端版本文档确认协议和用途。管理接口不要直接暴露公网：
 
@@ -176,8 +147,6 @@ touch .ts3server_license_accepted
 | 30033 | 文件传输（TCP；仅启用相关功能时开放） |
 
 云安全组与主机防火墙都要核对；不要为了“省事”放开所有管理端口或来源地址。语音端口是否应对公网开放，取决于你的部署方式。
-
-### 设置为系统服务（可选）
 
 让 TeamSpeak 在后台持续运行。先在前面的前台启动终端按 Ctrl+C 停止手动运行的实例，再切换到主目录；确认服务已退出后再移动文件和启动 systemd，避免同一实例重复运行：
 
@@ -216,10 +185,6 @@ sudo systemctl status teamspeak
 sudo journalctl -u teamspeak
 ```
 
-### 客户端连接
-
 在客户端中添加书签，填写服务器的可达地址和实际语音端口；能否连接还取决于服务端状态、网络规则和认证设置。TS3 初次启动会显示权限密钥等信息，按该版本的官方指引安全保存并使用；不要把密钥贴到公开日志或聊天中。
-
-
 
 参考：[TeamSpeak 官方下载](https://www.teamspeak.com/en/downloads/) · [TS3 3.13.8 Linux amd64 包与 Quick Start](https://files.teamspeak-services.com/releases/server/3.13.8/teamspeak3-server_linux_amd64-3.13.8.tar.bz2) · [TeamSpeak 入门指南](https://www.teamspeak.com/en/support/get-started)。下载页与包内说明核对于 2026-10-14；尚未实机安装。
