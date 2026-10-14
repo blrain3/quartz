@@ -95,3 +95,50 @@ test("folder-page removes tags, reruns cleanly, and rejects mismatched source", 
     rmSync(root, { recursive: true, force: true })
   }
 })
+
+test("404 home link stays at root or follows a normalized project base path", () => {
+  const root = fixture("patch-404-home.mjs", {})
+  const outputPath = resolve(root, "public", "404.html")
+  mkdirSync(dirname(outputPath), { recursive: true })
+  const original = '<a href="/">返回首页</a>'
+  try {
+    writeFileSync(outputPath, original)
+    assert.equal(run(root, "patch-404-home.mjs").status, 0)
+    assert.equal(readFileSync(outputPath, "utf8"), original)
+
+    assert.equal(
+      spawnSync(node, [resolve(root, "scripts", "patch-404-home.mjs")], {
+        encoding: "utf8",
+        env: { ...process.env, QUARTZ_BASE_PATH: "/quartz" },
+      }).status,
+      0,
+    )
+    assert.equal(readFileSync(outputPath, "utf8"), '<a href="/quartz/">返回首页</a>')
+
+    assert.equal(
+      spawnSync(node, [resolve(root, "scripts", "patch-404-home.mjs")], {
+        encoding: "utf8",
+        env: { ...process.env, QUARTZ_BASE_PATH: "/quartz/" },
+      }).status,
+      0,
+    )
+    assert.equal(readFileSync(outputPath, "utf8"), '<a href="/quartz/">返回首页</a>')
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test("404 home patch rejects missing or unmatched output", () => {
+  const root = fixture("patch-404-home.mjs", {})
+  const outputPath = resolve(root, "public", "404.html")
+  mkdirSync(dirname(outputPath), { recursive: true })
+  try {
+    assert.notEqual(run(root, "patch-404-home.mjs").status, 0)
+    writeFileSync(outputPath, '<a href="/">Home</a>')
+    assert.notEqual(run(root, "patch-404-home.mjs").status, 0)
+    writeFileSync(outputPath, '<a href="/">返回首页</a><a href="/">返回首页</a>')
+    assert.notEqual(run(root, "patch-404-home.mjs").status, 0)
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
