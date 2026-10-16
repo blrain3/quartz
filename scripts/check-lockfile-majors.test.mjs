@@ -52,6 +52,23 @@ test("rejects ambiguous relocation across multiple previously installed majors",
   }
 })
 
+test("rejects resolution to an existing root major after a nested copy disappears", () => {
+  const before = {
+    packages: {
+      "node_modules/example": { version: "2.0.0" },
+      "node_modules/parent": { version: "1.0.0" },
+      "node_modules/parent/node_modules/example": { version: "1.9.0" },
+    },
+  }
+  const after = {
+    packages: {
+      "node_modules/example": { version: "2.0.0" },
+      "node_modules/parent": { version: "1.1.0" },
+    },
+  }
+  assert.equal(majorChanges(before, after).length, 1)
+})
+
 test("allows unchanged non-semver entries and newly added dependencies", () => {
   assert.deepEqual(
     majorChanges(

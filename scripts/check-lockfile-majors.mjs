@@ -1,4 +1,5 @@
 import fs from "node:fs"
+import path from "node:path"
 import { pathToFileURL } from "node:url"
 
 // Inspect resolved versions, not PR titles or permissive manifest ranges.
@@ -29,6 +30,30 @@ export function majorChanges(before, after) {
     // Reject ambiguous relocations conservatively rather than guessing consumers.
     if (versions.some((v) => major(v, name) !== target)) {
       changes.push({ name, before: versions.join(", "), after: pkg.version })
+    }
+  }
+  // Removed nested copies can expose an unchanged ancestor with a different major.
+  for (const [name, pkg] of Object.entries(before.packages)) {
+    if (!name || after.packages[name]) continue
+    const installedName = name.split("node_modules/").at(-1)
+    let dir = name.slice(0, name.lastIndexOf("node_modules/")).replace(/\/$/, "")
+    for (;;) {
+      const replacement = (dir ? `${dir}/` : "") + `node_modules/${installedName}`
+      const next = after.packages[replacement]
+      if (next) {
+        if (changes.some((change) => change.name === replacement)) break
+        if (
+          identity(replacement, next) === identity(name, pkg) &&
+          next.version !== pkg.version &&
+          major(next.version, replacement) !== major(pkg.version, name)
+        ) {
+          changes.push({ name, before: pkg.version, after: next.version, replacement })
+        }
+        break
+      }
+      if (!dir) break
+      const parent = path.posix.dirname(dir)
+      dir = parent === "." ? "" : parent
     }
   }
   return changes
