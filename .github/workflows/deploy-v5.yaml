@@ -23,7 +23,9 @@ jobs:
             ('deployments', f'/accounts/{account}/workers/scripts/quartz/deployments'),
             ('versions', f'/accounts/{account}/workers/scripts/quartz/versions'),
             ('settings', f'/accounts/{account}/workers/scripts/quartz/settings'),
-            ('builds-triggers', f'/accounts/{account}/builds/triggers?worker_name=quartz'),
+            ('build-current', f'/accounts/{account}/builds/builds/b5e63237-c07c-400c-a7a1-b360293ba5d7'),
+            ('version-current', f'/accounts/{account}/workers/scripts/quartz/versions/5fa3a309-2a64-48bc-9def-169852c77a9e'),
+            ('service-quartz', f'/accounts/{account}/workers/services/quartz'),
           ]
           def sanitize(obj):
             if isinstance(obj, dict):
