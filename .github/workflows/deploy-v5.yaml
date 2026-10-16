@@ -50,7 +50,7 @@ jobs:
           if os.environ.get('REPAIR_CF') == 'true':
             baseline = request(f'/accounts/{account}/workers/scripts/quartz/deployments')['result']['deployments'][0]
             print('pre-repair-serving', json.dumps(sanitize(baseline)))
-            assert baseline['versions'] == [{'version_id': '5fa3a309-2a64-48bc-9def-169852c77a9e', 'percentage': 100}], 'Unexpected serving version; stop before configuration writes'
+            assert baseline['versions'] == [{'version_id': '9681bf0b-ea69-4431-917e-7cdf352d375e', 'percentage': 100}], 'Unexpected serving version; stop before configuration writes'
             for trigger in ['77a3f091-c67d-4ec9-8fb7-bbff59db7ab5', 'fbd4c585-1063-42fa-ae8c-e38de15a167d']:
               path = f'/accounts/{account}/builds/triggers/{trigger}'
               updated = request(path, 'PATCH', {'build_command': 'npm run check && npm test && npm run build', 'deploy_command': 'npx wrangler versions upload'})
