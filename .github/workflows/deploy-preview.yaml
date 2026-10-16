@@ -13,7 +13,9 @@ permissions:
 
 jobs:
   deploy-preview:
-    if: ${{ github.repository == 'blrain3/quartz' && github.event.workflow_run.conclusion == 'success' }}
+    # Workers Builds provides previews. This optional Pages project does not exist.
+    # Do not create another hosting project implicitly; opt in only after provisioning.
+    if: ${{ vars.CLOUDFLARE_PAGES_PREVIEWS == 'true' && github.repository == 'blrain3/quartz' && github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     name: Deploy Preview to Cloudflare Pages
     steps:

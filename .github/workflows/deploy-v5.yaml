@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: quartz-workers-production
+  cancel-in-progress: false
+
 jobs:
   deploy-v5:
     runs-on: ubuntu-latest
@@ -39,10 +43,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-plugins-
 
-      - run: npm install
+      - run: npm ci
 
       - name: Check types and style
         run: npm run check
+
+      - name: Test
+        run: npm test
 
       # same as local `npm run build`:
       # prebuild (install-plugins + patch) -> build -> postbuild (patch-graph-output)
