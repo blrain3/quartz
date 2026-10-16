@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-and-test:
-    if: ${{ github.repository == 'jackyzha0/quartz' }}
+    if: ${{ github.repository == 'blrain3/quartz' }}
     strategy:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
@@ -59,7 +59,7 @@ jobs:
         run: npx quartz build --bundleInfo -d content
 
   publish-tag:
-    if: ${{ github.repository == 'jackyzha0/quartz' && github.ref == 'refs/heads/v5' }}
+    if: ${{ github.repository == 'blrain3/quartz' && github.ref == 'refs/heads/v5' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write

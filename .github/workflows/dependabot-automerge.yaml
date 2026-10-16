@@ -12,7 +12,7 @@ permissions:
 jobs:
   auto-merge:
     if: >-
-      github.repository == 'jackyzha0/quartz' &&
+      github.repository == 'blrain3/quartz' &&
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.actor.login == 'dependabot[bot]' &&
