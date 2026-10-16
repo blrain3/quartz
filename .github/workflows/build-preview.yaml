@@ -36,16 +36,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-plugins-
 
-      - run: npm install
-
-      - name: Install Quartz plugins
-        run: npx quartz plugin install
+      - run: npm ci
 
       - name: Check types and style
         run: npm run check
 
+      - name: Test
+        run: npm test
+
       - name: Build Quartz
-        run: npx quartz build -d content -v
+        run: npm run build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v7

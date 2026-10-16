@@ -30,6 +30,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check types and style
+        run: npm run check
+
+      - name: Test
+        run: npm test
+
       # Keep the Pages build on the same lifecycle as the Cloudflare build:
       # prebuild installs plugins and applies all patches; postbuild copies
       # headers and applies output patches.

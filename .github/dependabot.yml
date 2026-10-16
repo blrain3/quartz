@@ -4,6 +4,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    # Major migrations need separate, explicit authorization.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       # Separated so a risky third-party major cannot block ecosystem updates.
       quartz-ecosystem:

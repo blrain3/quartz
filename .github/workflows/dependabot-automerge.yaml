@@ -48,6 +48,9 @@ jobs:
           runs=$(gh api "repos/${GH_REPO}/commits/${HEAD_SHA}/check-runs" --paginate \
             --jq '.check_runs[] | "\(.name)\t\(.status)\t\(.conclusion // "")"')
           echo "$runs"
+          required=$(gh api "repos/${GH_REPO}/commits/${HEAD_SHA}/check-runs" --paginate --slurp \
+            --jq '[.[].check_runs[] | select(.name | startswith("build-and-test ("))] | length == 3 and all(.[]; .status == "completed" and .conclusion == "success")')
+          test "$required" = "true"
           bad=$(printf '%s\n' "$runs" | awk -F'\t' '
             $2 != "completed" { print; next }
             $3 != "success" && $3 != "neutral" && $3 != "skipped" { print }
@@ -58,25 +61,61 @@ jobs:
             exit 1
           fi
 
-      - name: Confirm update is not a major bump
+      # Installs use legacy peer mode: CI success is not peer-compatibility evidence.
+      # Require the owner to audit peers and approve this exact commit explicitly.
+      - name: Require current owner peer-compatibility review
         if: steps.pr.outputs.found == 'true'
+        id: review
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           set -euo pipefail
-          title=$(gh pr view "$PR_NUMBER" --json title --jq .title)
-          echo "PR title: $title"
-          if printf '%s' "$title" | grep -qiE 'major'; then
-            echo "Refusing to merge a major update; needs human review."
-            exit 1
+          approvals=$(gh api "repos/${GH_REPO}/pulls/${PR_NUMBER}/reviews" --paginate --slurp \
+            --jq '[.[][] | select(.author_association == "OWNER")] | sort_by(.submitted_at) | [last | select(. != null and .state == "APPROVED" and .commit_id == env.HEAD_SHA and (.body | contains("PEER_COMPATIBILITY_VERIFIED")))] | length')
+          if [ "$approvals" -gt 0 ]; then
+            echo "approved=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Manual peer review of the current commit is required; no automatic merge."
+            echo "approved=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Merge
+      - name: Checkout trusted policy code, never the pull request
+        if: steps.pr.outputs.found == 'true'
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+
+      - name: Setup Node
+        if: steps.pr.outputs.found == 'true'
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Confirm actual locked updates contain no major bump
         if: steps.pr.outputs.found == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
-        run: gh pr merge "$PR_NUMBER" --squash --delete-branch
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          base=$(gh pr view "$PR_NUMBER" --json baseRefOid --jq .baseRefOid)
+          head=$(gh pr view "$PR_NUMBER" --json headRefOid --jq .headRefOid)
+          test "$head" = "$HEAD_SHA"
+          gh api "repos/${GH_REPO}/contents/package-lock.json?ref=${base}" --jq .content | base64 --decode > "$RUNNER_TEMP/base-lock.json"
+          gh api "repos/${GH_REPO}/contents/package-lock.json?ref=${head}" --jq .content | base64 --decode > "$RUNNER_TEMP/head-lock.json"
+          node scripts/check-lockfile-majors.mjs "$RUNNER_TEMP/base-lock.json" "$RUNNER_TEMP/head-lock.json"
+
+      - name: Merge
+        if: steps.pr.outputs.found == 'true' && steps.review.outputs.approved == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: gh pr merge "$PR_NUMBER" --squash --delete-branch --match-head-commit "$HEAD_SHA"
