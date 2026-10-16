@@ -5,14 +5,29 @@ import { pathToFileURL } from "node:url"
 export function majorChanges(before, after) {
   if (!before.packages || !after.packages) throw new Error("Expected npm package-lock packages")
   const changes = []
+  const identity = (name, pkg) => pkg.name ?? name.split("node_modules/").at(-1)
+  const oldByIdentity = new Map()
+  for (const [name, pkg] of Object.entries(before.packages)) {
+    if (!name) continue
+    const id = identity(name, pkg)
+    oldByIdentity.set(id, [...(oldByIdentity.get(id) ?? []), pkg.version])
+  }
+  const major = (version, name) => {
+    const match = /^(\d+)\.\d+\.\d+(?:[-+].*)?$/.exec(version ?? "")
+    if (!match) throw new Error(`Cannot classify changed version for ${name}`)
+    return match[1]
+  }
   for (const [name, pkg] of Object.entries(after.packages)) {
-    if (!name || !before.packages[name]) continue
-    const old = before.packages[name].version
-    if (old === pkg.version) continue
-    const a = /^(\d+)\.\d+\.\d+(?:[-+].*)?$/.exec(old ?? "")
-    const b = /^(\d+)\.\d+\.\d+(?:[-+].*)?$/.exec(pkg.version ?? "")
-    if (!a || !b) throw new Error(`Cannot classify changed version for ${name}`)
-    if (a[1] !== b[1]) changes.push({ name, before: old, after: pkg.version })
+    if (!name) continue
+    const id = identity(name, pkg)
+    const previous = before.packages[name]
+    const sameIdentity = previous && identity(name, previous) === id
+    const versions = sameIdentity ? [previous.version] : oldByIdentity.get(id)
+    if (!versions || versions.includes(pkg.version)) continue
+    const target = major(pkg.version, name)
+    if (!versions.some((v) => major(v, name) === target)) {
+      changes.push({ name, before: versions.join(", "), after: pkg.version })
+    }
   }
   return changes
 }

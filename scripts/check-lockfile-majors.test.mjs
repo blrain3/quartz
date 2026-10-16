@@ -31,6 +31,12 @@ test("fails closed on missing package maps and unclassifiable changed versions",
   assert.throws(() => majorChanges(lock("git+https://example.invalid/x"), lock("1.0.0")))
 })
 
+test("rejects a major upgrade relocated by npm hoisting", () => {
+  const before = { packages: { "node_modules/parent/node_modules/example": { version: "1.9.0" } } }
+  const after = { packages: { "node_modules/example": { version: "2.0.0" } } }
+  assert.equal(majorChanges(before, after).length, 1)
+})
+
 test("allows unchanged non-semver entries and newly added dependencies", () => {
   assert.deepEqual(
     majorChanges(
