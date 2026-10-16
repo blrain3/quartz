@@ -37,6 +37,21 @@ test("rejects a major upgrade relocated by npm hoisting", () => {
   assert.equal(majorChanges(before, after).length, 1)
 })
 
+test("rejects ambiguous relocation across multiple previously installed majors", () => {
+  const before = {
+    packages: {
+      "node_modules/first/node_modules/example": { version: "1.9.0" },
+      "node_modules/second/node_modules/example": { version: "2.0.0" },
+    },
+  }
+  for (const version of ["2.0.0", "2.1.0"]) {
+    assert.equal(
+      majorChanges(before, { packages: { "node_modules/example": { version } } }).length,
+      1,
+    )
+  }
+})
+
 test("allows unchanged non-semver entries and newly added dependencies", () => {
   assert.deepEqual(
     majorChanges(

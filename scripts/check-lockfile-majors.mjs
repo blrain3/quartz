@@ -23,9 +23,11 @@ export function majorChanges(before, after) {
     const previous = before.packages[name]
     const sameIdentity = previous && identity(name, previous) === id
     const versions = sameIdentity ? [previous.version] : oldByIdentity.get(id)
-    if (!versions || versions.includes(pkg.version)) continue
+    if (!versions || versions.every((v) => v === pkg.version)) continue
     const target = major(pkg.version, name)
-    if (!versions.some((v) => major(v, name) === target)) {
+    // An unrelated installed major must not mask a consumer upgrade after hoisting.
+    // Reject ambiguous relocations conservatively rather than guessing consumers.
+    if (versions.some((v) => major(v, name) !== target)) {
       changes.push({ name, before: versions.join(", "), after: pkg.version })
     }
   }
