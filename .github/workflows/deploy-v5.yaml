@@ -1,57 +1,40 @@
-name: Deploy v5 to Cloudflare Workers
+name: Inspect Quartz Cloudflare control plane
 
 on:
-  push:
-    branches:
-      - v5
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  deploy-v5:
+  inspect:
     runs-on: ubuntu-latest
-    name: Deploy v5 to Cloudflare Workers
     steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node
-        uses: actions/setup-node@v7
-        with:
-          node-version: 24
-
-      - name: Cache dependencies
-        uses: actions/cache@v6
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Cache Quartz plugins
-        uses: actions/cache@v6
-        with:
-          path: .quartz/plugins
-          key: ${{ runner.os }}-plugins-${{ hashFiles('quartz.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-plugins-
-
-      - run: npm install
-
-      - name: Check types and style
-        run: npm run check
-
-      # same as local `npm run build`:
-      # prebuild (install-plugins + patch) -> build -> postbuild (patch-graph-output)
-      - name: Build Quartz
-        run: npm run build
-
-      - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
+      - name: Read deployment, version, and Builds metadata only
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: python
+        run: |
+          import json, os, urllib.request, urllib.error
+          account = os.environ['CF_ACCOUNT']
+          headers = {'Authorization': 'Bearer ' + os.environ['CF_TOKEN']}
+          endpoints = [
+            ('deployments', f'/accounts/{account}/workers/scripts/quartz/deployments'),
+            ('versions', f'/accounts/{account}/workers/scripts/quartz/versions'),
+            ('settings', f'/accounts/{account}/workers/scripts/quartz/settings'),
+            ('builds-triggers', f'/accounts/{account}/builds/triggers?worker_name=quartz'),
+          ]
+          def sanitize(obj):
+            if isinstance(obj, dict):
+              return {k: ('[REDACTED]' if any(s in k.lower() for s in ['token', 'secret', 'password', 'binding']) else sanitize(v)) for k,v in obj.items()}
+            if isinstance(obj, list):
+              return [sanitize(v) for v in obj]
+            return obj
+          for label, path in endpoints:
+            try:
+              with urllib.request.urlopen(urllib.request.Request('https://api.cloudflare.com/client/v4'+path, headers=headers)) as r:
+                data = json.load(r)
+              print(label, json.dumps(sanitize(data), ensure_ascii=False))
+            except urllib.error.HTTPError as e:
+              print(label, 'HTTP', e.code, e.read().decode())
