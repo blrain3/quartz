@@ -2,6 +2,11 @@ name: Inspect Quartz Cloudflare control plane
 
 on:
   workflow_dispatch:
+    inputs:
+      repair_cf:
+        description: Convert Quartz Builds to full-lifecycle preview-only uploads
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -14,6 +19,7 @@ jobs:
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          REPAIR_CF: ${{ inputs.repair_cf }}
         shell: python
         run: |
           import json, os, urllib.request, urllib.error
@@ -34,6 +40,30 @@ jobs:
             if isinstance(obj, list):
               return [sanitize(v) for v in obj]
             return obj
+          def request(path, method='GET', payload=None):
+            data = None if payload is None else json.dumps(payload).encode()
+            req = urllib.request.Request('https://api.cloudflare.com/client/v4'+path, data=data, headers={**headers, 'Content-Type': 'application/json'}, method=method)
+            with urllib.request.urlopen(req) as r:
+              result = json.load(r)
+            assert result.get('success'), sanitize(result)
+            return result
+          if os.environ.get('REPAIR_CF') == 'true':
+            baseline = request(f'/accounts/{account}/workers/scripts/quartz/deployments')['result']['deployments'][0]
+            print('pre-repair-serving', json.dumps(sanitize(baseline)))
+            assert baseline['versions'] == [{'version_id': '5fa3a309-2a64-48bc-9def-169852c77a9e', 'percentage': 100}], 'Unexpected serving version; stop before configuration writes'
+            for trigger in ['77a3f091-c67d-4ec9-8fb7-bbff59db7ab5', 'fbd4c585-1063-42fa-ae8c-e38de15a167d']:
+              path = f'/accounts/{account}/builds/triggers/{trigger}'
+              updated = request(path, 'PATCH', {'build_command': 'npm run check && npm test && npm run build', 'deploy_command': 'npx wrangler versions upload'})
+              print('updated-trigger', json.dumps(sanitize(updated)))
+            current = request(f'/accounts/{account}/builds/builds/b5e63237-c07c-400c-a7a1-b360293ba5d7')['result']
+            if current['status'] != 'stopped':
+              print('cancel-old-production-build', json.dumps(sanitize(request(f'/accounts/{account}/builds/builds/b5e63237-c07c-400c-a7a1-b360293ba5d7/cancel', 'POST'))))
+            readback = request(f'/accounts/{account}/builds/workers/9bc8f26394c84b11a59ced84b4ecff75/triggers')['result']
+            assert len(readback) == 2
+            for t in readback:
+              assert t['build_command'] == 'npm run check && npm test && npm run build'
+              assert t['deploy_command'] == 'npx wrangler versions upload'
+            print('verified-preview-only-triggers', json.dumps(sanitize(readback)))
           for label, path in endpoints:
             try:
               with urllib.request.urlopen(urllib.request.Request('https://api.cloudflare.com/client/v4'+path, headers=headers)) as r:
